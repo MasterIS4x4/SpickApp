@@ -1,9 +1,9 @@
-import type { CapacitorConfig } from '@capacitor/cli';
+import type { CapacitorConfig } from '@capacitor/cli'
 
 const config: CapacitorConfig = {
-  appId: 'io.ionic.starter',
-  appName: 'UBBOrarFrontend',
-  webDir: 'dist'
-};
+  appId: 'com.ubb.diss.spickapp',
+  appName: 'SpickApp',
+  webDir: 'dist',
+}
 
-export default config;
+export default config

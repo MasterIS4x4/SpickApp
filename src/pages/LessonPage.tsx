@@ -2,13 +2,14 @@ import {IonButton, IonContent, IonIcon, IonItem, IonLabel, IonList} from "@ionic
 import {useAppDispatch, useAppSelector} from "../store"
 import {useEffect, useState} from "react"
 import {setCurrentTab} from "../reducers/navigation"
-import {Lesson} from "../model/lesson"
+import {ILesson} from "../model/lesson"
 import {getLesson} from "../service/lesson"
 import {BilingualTitle} from "../components/BilingualTitle"
 import {LearnLesson} from "../components/LearnLesson"
-import {Quiz} from "../model/quiz"
 import {generateQuizzes} from "../service/quiz"
-import { SelectWordLesson } from "../components/SelectWord"
+import {Quizzes} from "../components/Quizzes"
+import {useParams} from "react-router"
+import {IQuiz} from "../model/quiz"
 
 enum LessonStatus {
   LEARNING, QUIZ, DONE
@@ -16,9 +17,10 @@ enum LessonStatus {
 
 export const LessonPage = () => {
   const dispatch = useAppDispatch()
-  const id = "1"
-  const [lesson, setLesson] = useState<Lesson|undefined>()
-  const [quizes, setQuizes] = useState<Quiz[]>([])
+  const params = useParams<{id: string}>()
+  const id = params.id
+  const [lesson, setLesson] = useState<ILesson|undefined>()
+  const [quizzes, setQuizzes] = useState<IQuiz[]>([])
   const [status, setStatus] = useState<LessonStatus>(LessonStatus.LEARNING)
 
   useEffect(() => {
@@ -29,7 +31,7 @@ export const LessonPage = () => {
       setLesson(lesson)
       const quizzes = generateQuizzes(lesson)
       console.log("Quizzes: ", quizzes)
-      setQuizes(quizzes)
+      setQuizzes(quizzes)
     }).catch(err => {
       alert("Error fetching lessons. DB may be not available")
     })
@@ -41,20 +43,16 @@ export const LessonPage = () => {
 
   return (
     <IonContent className="ion-no-padding" style={{display: "flex", flexDirection: "column", height: "100%"}}>
-      <BilingualTitle ro={"Lecția " + id} eng={"Lesson "+id} />
       {status === LessonStatus.LEARNING && <>
-        <LearnLesson lesson={lesson} onVideoEnd={startQuiz} />
+        <BilingualTitle ro={"Lecția " + id} eng={"Lesson "+id} />
+        {/*<LearnLesson lesson={lesson} onVideoEnd={startQuiz} />*/}
         <div style={{display: "flex", flexDirection: "row", justifyContent: "space-around", marginTop: ".5rem"}}>
           <IonButton onClick={startQuiz} style={{margin: "1em"}}>Start Quiz</IonButton>
         </div>
       </>}
-      {status === LessonStatus.QUIZ && lesson && (
-        <SelectWordLesson
-          lesson={lesson}
-          onComplete={() => setStatus(LessonStatus.QUIZ)} // TODO: handle completion
-        />
-      )}
-
+      {status === LessonStatus.QUIZ && <>
+        <Quizzes quizzes={quizzes} />
+      </>}
     </IonContent>
   )
 }

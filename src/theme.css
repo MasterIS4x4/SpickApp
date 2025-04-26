@@ -1,3 +1,33 @@
 ion-item {
     --transition: none;
 }
+
+/* Default (mobile) */
+.responsive-image {
+    --image-max-width: 70vw;
+    --image-max-height: 50vh;
+}
+
+/* Tablet (md) and up */
+@media (min-width: 768px) {
+    .responsive-image {
+        --image-max-width: 50vw;
+        --image-max-height: 40vh;
+    }
+}
+
+/* Desktop (lg) and up */
+@media (min-width: 992px) {
+    .responsive-image {
+        --image-max-width: 40vw;
+        --image-max-height: 30vh;
+    }
+}
+
+/* Large desktop (xl) */
+@media (min-width: 1200px) {
+    .responsive-image {
+        --image-max-width: 30vw;
+        --image-max-height: 30vh;
+    }
+}

@@ -1,5 +1,5 @@
 
-export interface Word {
+export interface IWord {
   id: string
   nameRO: string
   nameEN: string
@@ -7,10 +7,10 @@ export interface Word {
   audioUrl: string | string[]
 }
 
-export interface Lesson {
+export interface ILesson {
   id: string
   nameRO: string
   nameEN: string
   videoUrl: string
-  words: Word[]
+  words: IWord[]
 }

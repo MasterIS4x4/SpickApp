@@ -2,7 +2,7 @@ import {IonContent, IonIcon, IonItem, IonLabel, IonList} from "@ionic/react"
 import {useAppDispatch, useAppSelector} from "../store"
 import {useEffect, useState} from "react"
 import {setCurrentTab} from "../reducers/navigation"
-import {Lesson} from "../model/lesson"
+import {ILesson} from "../model/lesson"
 import {getLessons} from "../service/lesson"
 import {BilingualTitle} from "../components/BilingualTitle"
 import {book} from "ionicons/icons"
@@ -10,7 +10,7 @@ import {basePath} from "../App"
 
 export const LessonsPage = () => {
   const dispatch = useAppDispatch()
-  const [lessons, setLessons] = useState<Lesson[]>([])
+  const [lessons, setLessons] = useState<ILesson[]>([])
 
   useEffect(() => {
     //@ts-ignore

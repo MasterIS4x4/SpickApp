@@ -1,12 +1,34 @@
 // Quiz generator
-import {Lesson, Word} from "../model/lesson"
-import {MatchQuiz, MultipleChoiceQuiz, Quiz, QuizType} from "../model/quiz"
+import {ILesson, IWord} from "../model/lesson"
+import {IMatchQuiz, IMultipleChoiceQuiz, IQuiz, QuizDataType, QuizType} from "../model/quiz"
 
-const MULTIPLE_CHOICE_QUIZ_CHANCE = 0.3
+const MATCH_NUMBER_OF_ELEMENTS = 3
+const MULTIPLE_CHOICE_NUMBER_OF_CHOICES = 3
+const MULTIPLE_CHOICE_QUIZ_CHANCE = 1 // TODO: back to 0.7 after implementing UI
 
-const chooseRandomWords = (words: Word[]): Word[] => {
+const possibleTypes = []
+for (let i=0; i < Object.keys(QuizDataType).length; i++) {
+  for (let j=i+1; j < Object.keys(QuizDataType).length; j++) {
+    possibleTypes.push({ a: Object.values(QuizDataType)[i] as QuizDataType, b: Object.values(QuizDataType)[j] as QuizDataType })
+  }
+}
+
+interface GenerationContext {
+  usedWords: string[]
+  match: {
+    numberOfElements: number
+    usedTypes: { a: QuizDataType, b: QuizDataType }[]
+    currentIndex: number
+  }
+  multipleChoice: {
+    numberOfChoices: number
+    usedOutputTypes: QuizDataType[]
+  }
+}
+
+const chooseRandomWords = (words: IWord[]): IWord[] => {
   let tries = 0
-  let randomWords: Word[]
+  let randomWords: IWord[]
   while(tries < 10) {
     randomWords = words.sort(() => Math.random() - Math.random()).slice(0, 3)
     // check if a word includes another word
@@ -27,56 +49,96 @@ const chooseRandomWords = (words: Word[]): Word[] => {
   return randomWords
 }
 
-const generateMultipleChoiceQuiz = (lesson: Lesson, usedWords: string[], numberOfChoices = 3): MultipleChoiceQuiz => {
-  const words = lesson.words.filter((word) => !usedWords.includes(word.id))
-  if (words.length < numberOfChoices) {
-    words.push(...lesson.words.filter((word) => usedWords.includes(word.id)))
-    usedWords = []
+const generateMultipleChoiceQuiz = (lesson: ILesson, context: GenerationContext): IMultipleChoiceQuiz => {
+  // filter remaining words and add used words if not enough
+  const words = lesson.words.filter((word) => !context.usedWords.includes(word.id))
+  const unusedWords = [...words]
+  if (words.length < context.multipleChoice.numberOfChoices) {
+    // add only how many words are needed to complete the number of choices, in order to make sure the unused words can be chosen as correct answer
+    words.push(...lesson.words.filter((word) => context.usedWords.includes(word.id))
+    .sort(() => Math.random() - Math.random()).slice(0, context.multipleChoice.numberOfChoices - words.length))
   }
+  // choose random words and answer
   const randomWords = chooseRandomWords(words)
-  const correct = Math.floor(Math.random() * randomWords.length)
-  usedWords.push(randomWords[correct].id)
+  let correct = Math.floor(Math.random() * randomWords.length)
+  if (unusedWords.length !== words.length) {
+    // there are few words unused, so just choose one of them
+    const unusedWord = unusedWords[Math.floor(Math.random() * unusedWords.length)]
+    correct = randomWords.findIndex((word) => word.id === unusedWord.id)
+  }
+  // update context
+  if (!context.usedWords.includes(randomWords[correct].id)) {
+    context.usedWords.push(randomWords[correct].id)
+  }
+  // choose random input and output types
+  let outputType: QuizDataType
+  if (context.multipleChoice.usedOutputTypes.length % Object.keys(QuizDataType).length === 0) {
+    outputType = Object.values(QuizDataType)[Math.floor(Math.random() * Object.keys(QuizDataType).length)] as QuizDataType
+    context.multipleChoice.usedOutputTypes = []
+  } else {
+    const remainingOutputTypes = Object.values(QuizDataType).filter((type) => !context.multipleChoice.usedOutputTypes.includes(type as QuizDataType))
+    outputType = remainingOutputTypes[Math.floor(Math.random() * remainingOutputTypes.length)] as QuizDataType
+  }
+  context.multipleChoice.usedOutputTypes.push(outputType)
+  // add the other data types to the input types
+  const remainingInputTypes = Object.values(QuizDataType).filter((type) => type !== outputType) as QuizDataType[]
   return {
-    lessonId: lesson.id,
+    question: "Choose the correct answer",
+    inputTypes: remainingInputTypes,
+    outputType: outputType,
     words: randomWords,
     correct: correct,
+    type: QuizType.MultipleChoice,
   }
 }
 
-const generateMatchQuiz = (lesson: Lesson, usedWords: string[], numberOfElements = 3): MatchQuiz => {
-  const words = lesson.words.filter((word) => !usedWords.includes(word.id))
-  if (words.length < numberOfElements) {
-    words.push(...lesson.words.filter((word) => usedWords.includes(word.id)))
-    usedWords = []
+// TODO: test and adapt to first one
+const generateMatchQuiz = (lesson: ILesson, context: GenerationContext): IMatchQuiz => {
+  // filter remaining words and add used words if not enough
+  const words = lesson.words.filter((word) => !context.usedWords.includes(word.id))
+  if (words.length < context.multipleChoice.numberOfChoices) {
+    // add only how many words are needed to complete the number of choices, in order to make sure the unused words can be chosen as correct answer
+    words.push(...lesson.words.filter((word) => context.usedWords.includes(word.id))
+    .sort(() => Math.random() - Math.random()).slice(0, context.multipleChoice.numberOfChoices - words.length))
   }
+  // choose random words and answer
   const randomWords = chooseRandomWords(words)
-  usedWords.push(...randomWords.map((word) => word.id))
+  // choose random input and output types
+  const { a: inputType, b: outputType } = possibleTypes[context.match.currentIndex % possibleTypes.length]
+  // update context
+  context.usedWords.push(...randomWords.map((word) => word.id))
+  context.match.currentIndex++
   return {
-    lessonId: lesson.id,
+    question: "Match the given elements",
     words: randomWords,
+    type: QuizType.Match,
+    inputType: inputType,
+    outputType: outputType,
   }
 }
 
-export const generateQuiz = (lesson: Lesson, usedWords: string[], quizType: QuizType): MultipleChoiceQuiz | MatchQuiz => {
-  switch (quizType) {
-    case QuizType.MultipleChoice:
-      return generateMultipleChoiceQuiz(lesson, usedWords)
-    case QuizType.Match:
-      return generateMatchQuiz(lesson, usedWords)
-    default:
-      throw new Error("Invalid quiz type")
-  }
-}
-
-export const generateQuizzes = (lesson: Lesson): Quiz[] => {
-  if (lesson.words.length < 3)
+export const generateQuizzes = (lesson: ILesson): IQuiz[] => {
+  if (lesson.words.length < Math.max(MATCH_NUMBER_OF_ELEMENTS, MULTIPLE_CHOICE_NUMBER_OF_CHOICES))
     return []
-  const usedWords: string[] = []
-  const quizzes: Quiz[] = []
-  const numberOfQuizzes = Math.floor(Math.random() * lesson.words.length * 3 / 4) + 1
-  for (let i = 0; i < numberOfQuizzes; i++) {
+  const context: GenerationContext = {
+    usedWords: [],
+    match: {
+      numberOfElements: MATCH_NUMBER_OF_ELEMENTS,
+      currentIndex: 0,
+      usedTypes: [],
+    },
+    multipleChoice: {
+      numberOfChoices: MULTIPLE_CHOICE_NUMBER_OF_CHOICES,
+      usedOutputTypes: [],
+    },
+  }
+  const quizzes: IQuiz[] = []
+  while(context.usedWords.length < lesson.words.length) {
     const quizType = Math.random() < MULTIPLE_CHOICE_QUIZ_CHANCE ? QuizType.MultipleChoice : QuizType.Match
-    quizzes.push(generateQuiz(lesson, usedWords, quizType))
+    const quiz = quizType === QuizType.MultipleChoice ?
+      generateMultipleChoiceQuiz(lesson, context) :
+      generateMatchQuiz(lesson, context)
+    quizzes.push(quiz)
   }
   return quizzes
 }

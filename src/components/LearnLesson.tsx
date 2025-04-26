@@ -1,10 +1,10 @@
-import {Lesson} from "../model/lesson"
+import {ILesson} from "../model/lesson"
 import YouTube from "react-youtube"
 import {dvhToPx, dvwToPx} from "../utils"
 import {useEffect, useState} from "react"
 
 interface LearnLessonProps {
-  lesson: Lesson
+  lesson: ILesson
   onVideoEnd?: () => void
 }
 

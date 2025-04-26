@@ -8,6 +8,7 @@ import {BilingualTitle} from "../components/BilingualTitle"
 import {LearnLesson} from "../components/LearnLesson"
 import {Quiz} from "../model/quiz"
 import {generateQuizzes} from "../service/quiz"
+import { SelectWordLesson } from "../components/SelectWord"
 
 enum LessonStatus {
   LEARNING, QUIZ, DONE
@@ -47,8 +48,13 @@ export const LessonPage = () => {
           <IonButton onClick={startQuiz} style={{margin: "1em"}}>Start Quiz</IonButton>
         </div>
       </>}
-      {status === LessonStatus.QUIZ && <>
-      </>}
+      {status === LessonStatus.QUIZ && lesson && (
+        <SelectWordLesson
+          lesson={lesson}
+          onComplete={() => setStatus(LessonStatus.QUIZ)} // TODO: handle completion
+        />
+      )}
+
     </IonContent>
   )
 }

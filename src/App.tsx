@@ -43,12 +43,14 @@ import './theme.css'
 
 import {Layout} from "./Layout"
 import {Test} from "./pages/Test"
+import {LessonsPage} from "./pages/LessonsPage"
 import {useAppDispatch, useAppSelector} from "./store"
 import {useEffect} from "react"
 import {Preferences} from "./pages/Preferences"
 import {useDarkMode} from "./hooks/useDarkMode"
 import {initialPreferences, setPreferences} from "./reducers/preferences"
 import {getPreferencesFromStorage} from "./storage/preferences"
+import {LessonPage} from "./pages/LessonPage"
 
 setupIonicReact()
 
@@ -74,12 +76,14 @@ const App = () => {
       <IonReactRouter>
         <IonRouterOutlet>
           <Layout>
-            <Route exact path={basePath} render={() => <Redirect to={basePath + "test"} />} />
+            <Route exact path={basePath} render={() => <Redirect to={basePath + "lessons"} />} />
+            <Route exact path={basePath + "lessons"} component={LessonsPage} />
+            <Route exact path={basePath + "lessons/:id"} component={LessonPage} />
             <Route exact path={basePath +"preferences"} component={Preferences} />
             <Route exact path={basePath +"test"} component={Test} />
 
             {/* Catch-all route to redirect to home */}
-            <Route path="*" render={() => <Redirect to={basePath + "test"} />} />
+            <Route path="*" render={() => <Redirect to={basePath + "lessons"} />} />
           </Layout>
         </IonRouterOutlet>
       </IonReactRouter>

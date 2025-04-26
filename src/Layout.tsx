@@ -23,6 +23,7 @@ export const Layout = ({children}) => {
         </IonHeader>
         <IonContent className="ion-padding">
           <IonList>
+            <MenuEntry title="Lessons" path={basePath + "lessons"} />
             <MenuEntry title="Preferences" path={basePath + "preferences"} />
             <MenuEntry title="Test" path={basePath + "test"} />
           </IonList>

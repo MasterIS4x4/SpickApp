@@ -49,6 +49,8 @@ const chooseRandomWords = (words: IWord[]): IWord[] => {
   return randomWords
 }
 
+// TODO bug: words are not unique
+
 const generateMultipleChoiceQuiz = (lesson: ILesson, context: GenerationContext): IMultipleChoiceQuiz => {
   // filter remaining words and add used words if not enough
   const words = lesson.words.filter((word) => !context.usedWords.includes(word.id))
@@ -91,13 +93,12 @@ const generateMultipleChoiceQuiz = (lesson: ILesson, context: GenerationContext)
     question: `What is the ${outputType.toLowerCase()} of the word?`,
     inputTypes: remainingInputTypes,
     outputType: outputType,
-    words: randomWords,
+    words: [...randomWords],
     correct: correct,
     type: QuizType.MultipleChoice,
   }
 }
 
-// TODO: test and adapt to first one
 const generateMatchQuiz = (lesson: ILesson, context: GenerationContext): IMatchQuiz => {
   // filter remaining words and add used words if not enough
   const words = lesson.words.filter((word) => !context.usedWords.includes(word.id))
@@ -121,7 +122,7 @@ const generateMatchQuiz = (lesson: ILesson, context: GenerationContext): IMatchQ
   context.match.currentIndex++
   return {
     question: "Match the given words",
-    words: randomWords,
+    words: [...randomWords],
     type: QuizType.Match,
     inputType: inputType,
     outputType: outputType,

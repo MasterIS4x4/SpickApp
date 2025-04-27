@@ -9,6 +9,9 @@ interface MultipleChoiceQuizProps {
   onNext: () => void
 }
 
+/**
+ * MultipleChoiceQuiz component - from multiple choices, select *ONLY* the correct ONE
+ */
 export const MultipleChoiceQuiz = (props: MultipleChoiceQuizProps) => {
   const correctWord = props.quiz.words[props.quiz.correct]
   const inputTypes = props.quiz.inputTypes
@@ -60,10 +63,13 @@ export const MultipleChoiceQuiz = (props: MultipleChoiceQuizProps) => {
             >
               <div style={{ display: 'flex', alignItems: 'center', gap: '.5rem', //justifyContent: 'center',
                 flexDirection: outputType === QuizDataType.Image ? 'column-reverse' : 'row'}}>
-                <IonBadge style={{padding: ".75rem", fontSize: "1.5rem"}} onClick={() => onElementClick(index) }>
+                <IonBadge style={{padding: ".75rem", fontSize: "1.5rem",
+                  backgroundColor: selected.includes(index) ?
+                    (isSuccess && index === correct ? 'var(--ion-color-success)' : 'var(--ion-color-danger)') : 'var(--ion-color-primary)',
+                  }} onClick={() => onElementClick(index) }>
                   {index + 1}
                 </IonBadge>
-                <DataTypeRenderer word={{...word}} type={props.quiz.outputType} />
+                <DataTypeRenderer word={word} type={props.quiz.outputType} />
               </div>
             </IonCol>
           ))}

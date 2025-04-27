@@ -14,6 +14,9 @@ interface Size {
   height: number
 }
 
+/**
+ * The LearnLesson component renders a YouTube video player for a given lesson.
+ */
 export const LearnLesson = (props: LearnLessonProps) => {
   const [size, setSize] = useState<Size>({
     width: dvwToPx(95), height: dvhToPx(75)

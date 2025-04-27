@@ -74,6 +74,7 @@ export const LessonPage = ({history}) => {
       {status === LessonStatus.DONE && <>
         <div style={{display: "flex", flexDirection: "row", justifyContent: "space-around", marginTop: ".5rem"}}>
           <IonButton onClick={continueLearning} style={{margin: "1em"}}>Continue Learning</IonButton>
+          {/*TODO: add icon(s)*/}
         </div>
         <LearnLesson lesson={lesson} />
         <h3 className="ion-padding">Words learned:</h3>
@@ -84,7 +85,7 @@ export const LessonPage = ({history}) => {
             }} onMouseEnter={() => setHoveredIndex(index)} onClick={() => setHoveredIndex(index)}>
               <WordCard word={word} types={[QuizDataType.Text, QuizDataType.Audio, QuizDataType.Image]} key={index} showLabel={true} />
               <IonItemDivider
-                style={{
+                style={{ // TODO: make divider smaller
                   backgroundColor: "var(--ion-color-medium-tint)", // Optional: make it more visible
                   opacity: 0.7 // Optional: subtle appearance
                 }}

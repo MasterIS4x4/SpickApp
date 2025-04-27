@@ -40,9 +40,11 @@ export const Quizzes = (props: QuizzesProps) => {
     }
   }
 
+  // TODO: button to go back to learning (YT)
+
   return (
     <div style={{paddingTop: ".35rem"}}>
-      {!isQuizzesDone && <IonProgressBar value={(currentQuizIndex + 1) / props.quizzes.length} style={{height: '1rem'}}/>}
+      {!isQuizzesDone && <IonProgressBar value={(currentQuizIndex + .5) / props.quizzes.length} style={{height: '1rem'}}/>}
       {!isQuizzesDone && props.quizzes[currentQuizIndex].type === QuizType.MultipleChoice &&
         <MultipleChoiceQuiz
           quiz={props.quizzes[currentQuizIndex] as IMultipleChoiceQuiz}

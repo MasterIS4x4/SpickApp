@@ -5,6 +5,7 @@ import {useEffect, useState} from "react"
 
 interface LearnLessonProps {
   lesson: ILesson
+  autoPlay?: boolean
   onVideoEnd?: () => void
 }
 
@@ -46,14 +47,16 @@ export const LearnLesson = (props: LearnLessonProps) => {
           width: size.width, // 75% of the viewport height
           height: size.height, // 100% of the viewport width
           playerVars: {
-            autoplay: 1,
+            autoplay: props.autoPlay ? 1 : 0,
             controls: 1,
             rel: 0,
             showinfo: 0,
           },
         }}
         onReady={(event) => {
-          event.target?.playVideo()
+          if (props.autoPlay) {
+            event.target?.playVideo()
+          }
         }}
         onEnd={() => {
           props.onVideoEnd?.()

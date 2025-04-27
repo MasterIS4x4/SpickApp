@@ -30,3 +30,22 @@ export async function getLesson(id: string): Promise<ILesson> {
     throw new Error("Failed to parse lesson data. JSON format is incorrect.")
   }
 }
+
+export async function getNextLesson(id: string): Promise<ILesson|undefined> {
+  const response = await fetch(`${API_URL}/lessons.json`)
+  if (!response.ok) {
+    throw new Error("Failed to fetch lesson")
+  }
+  try {
+    const lessons: ILesson[] = await response.json()
+    console.info("Fetched lessons: ", lessons)
+    const index = lessons.findIndex((lesson) => lesson.id === id)
+    if (index < 0 || index+1 >= lessons.length) {
+      return undefined
+    }
+    return lessons[(index + 1)]
+  } catch (error) {
+    console.error("Error parsing lesson data: ", error)
+    throw new Error("Failed to parse lesson data. JSON format is incorrect.")
+  }
+}

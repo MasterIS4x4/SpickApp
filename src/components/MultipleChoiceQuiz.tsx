@@ -1,6 +1,8 @@
 import {IMultipleChoiceQuiz, QuizDataType} from "../model/quiz"
-import {IonBadge, IonButton, IonCol, IonGrid, IonLabel, IonRow} from "@ionic/react"
+import {IonBadge, IonButton, IonCard, IonCol, IonGrid, IonItem, IonLabel, IonList, IonRow} from "@ionic/react"
 import {DataTypeRenderer} from "./DataTypeRenderer"
+import {WordCard} from "./WordCard"
+import {useEffect, useState} from "react"
 
 interface MultipleChoiceQuizProps {
   quiz: IMultipleChoiceQuiz
@@ -14,20 +16,33 @@ export const MultipleChoiceQuiz = (props: MultipleChoiceQuizProps) => {
   const words = props.quiz.words
   const correct = props.quiz.correct
 
+  const [selected, setSelected] = useState([])
+  const [isSuccess, setIsSuccess] = useState(false)
+
+  const onElementClick = (index: number) => {
+    if (!selected.includes(index) && !isSuccess) {
+      setSelected((prevSelected) => [...prevSelected, index])
+      if (index === correct) {
+        setIsSuccess(true)
+        // TODO: handle correct answer: play audio, vibrate, etc.
+      }
+      else {
+        // TODO: handle wrong answer: play audio, vibrate, etc.
+      }
+    }
+  }
+
+  const nextWord = () => {
+    setSelected([])
+    setIsSuccess(false)
+    props.onNext()
+  }
+
   return (
     <div className="ion-padding">
       <h2>{props.quiz.question}</h2>
-      <div style={{ display: 'flex', flexDirection: 'column', gap: '.5rem' }}>
-        {inputTypes.map((inputType, index) => (
-          <div key={index} style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
-            {/*<IonLabel key={index} style={{ marginRight: '1em' }}>*/}
-            {/*  {inputType}:*/}
-            {/*</IonLabel>*/}
-            <DataTypeRenderer word={correctWord} type={inputType} />
-          </div>
-        ))}
-      </div>
-      <IonGrid style={{ marginTop: '1rem' }}>
+      <WordCard word={correctWord} types={inputTypes} showLabel={true} />
+      <IonGrid>
         <IonRow className="ion-justify-content-center">
           {words.map((word, index) => (
             <IonCol
@@ -37,26 +52,30 @@ export const MultipleChoiceQuiz = (props: MultipleChoiceQuizProps) => {
               style={{
                 textAlign: 'center',
                 marginBottom: '.5rem', // Add some spacing between rows on mobile
-                border: index === correct ? '3px solid green' : '3px solid red',
+                border: '2px solid ' + (selected.includes(index) ?
+                  (isSuccess && index === correct ? 'var(--ion-color-success)' : 'var(--ion-color-danger)') : 'var(--ion-color-primary)'),
                 borderRadius: 10,
               }}
+              onClick={() => outputType !== QuizDataType.Audio && onElementClick(index)}
             >
               <div style={{ display: 'flex', alignItems: 'center', gap: '.5rem', //justifyContent: 'center',
                 flexDirection: outputType === QuizDataType.Image ? 'column-reverse' : 'row'}}>
-                <IonBadge style={{padding: ".75rem", fontSize: "1.5rem"}}>
+                <IonBadge style={{padding: ".75rem", fontSize: "1.5rem"}} onClick={() => onElementClick(index) }>
                   {index + 1}
                 </IonBadge>
-                <DataTypeRenderer word={word} type={props.quiz.outputType} />
+                <DataTypeRenderer word={{...word}} type={props.quiz.outputType} />
               </div>
             </IonCol>
           ))}
         </IonRow>
       </IonGrid>
-      <div style={{ display: 'flex', justifyContent: 'center' }}>
-        <IonButton onClick={props.onNext} color="primary">
-          Next
-        </IonButton>
-      </div>
+      {isSuccess &&
+        <div style={{ display: 'flex', justifyContent: 'center' }}>
+          <IonButton onClick={nextWord} color="primary">
+            Next
+          </IonButton>
+        </div>
+      }
     </div>
   )
 }

@@ -35,8 +35,8 @@ const chooseRandomWords = (words: IWord[]): IWord[] => {
     const hasDuplicates = randomWords.some((word, index) => {
       return randomWords.some((otherWord, otherIndex) => {
         return index !== otherIndex && (
-          word.nameRO.includes(otherWord.nameRO) ||
-          word.nameEN.includes(otherWord.nameEN)
+          word.nameRO.includes(otherWord.nameRO) || word.nameEN.includes(otherWord.nameEN) ||
+          otherWord.nameRO.includes(word.nameRO) || otherWord.nameEN.includes(word.nameEN)
         )
       })
     })
@@ -55,8 +55,13 @@ const generateMultipleChoiceQuiz = (lesson: ILesson, context: GenerationContext)
   const unusedWords = [...words]
   if (words.length < context.multipleChoice.numberOfChoices) {
     // add only how many words are needed to complete the number of choices, in order to make sure the unused words can be chosen as correct answer
-    words.push(...lesson.words.filter((word) => context.usedWords.includes(word.id))
-    .sort(() => Math.random() - Math.random()).slice(0, context.multipleChoice.numberOfChoices - words.length))
+    let randomWords = lesson.words.filter((word) => context.usedWords.includes(word.id))
+    // filter randomWords to not include the words that are already in the quiz or words that include each other
+    randomWords = randomWords.filter((word) => !words.some((otherWord) => {
+      return word.nameRO.includes(otherWord.nameRO) || word.nameEN.includes(otherWord.nameEN) ||
+        otherWord.nameRO.includes(word.nameRO) || otherWord.nameEN.includes(word.nameEN)
+    }))
+    words.push(...randomWords.sort(() => Math.random() - Math.random()).slice(0, context.multipleChoice.numberOfChoices - words.length))
   }
   // choose random words and answer
   const randomWords = chooseRandomWords(words)
@@ -83,7 +88,7 @@ const generateMultipleChoiceQuiz = (lesson: ILesson, context: GenerationContext)
   // add the other data types to the input types
   const remainingInputTypes = Object.values(QuizDataType).filter((type) => type !== outputType) as QuizDataType[]
   return {
-    question: "Choose the correct answer",
+    question: `What is the ${outputType.toLowerCase()} of the word?`,
     inputTypes: remainingInputTypes,
     outputType: outputType,
     words: randomWords,
@@ -98,18 +103,24 @@ const generateMatchQuiz = (lesson: ILesson, context: GenerationContext): IMatchQ
   const words = lesson.words.filter((word) => !context.usedWords.includes(word.id))
   if (words.length < context.multipleChoice.numberOfChoices) {
     // add only how many words are needed to complete the number of choices, in order to make sure the unused words can be chosen as correct answer
-    words.push(...lesson.words.filter((word) => context.usedWords.includes(word.id))
-    .sort(() => Math.random() - Math.random()).slice(0, context.multipleChoice.numberOfChoices - words.length))
+    let randomWords = lesson.words.filter((word) => context.usedWords.includes(word.id))
+    // filter randomWords to not include the words that are already in the quiz or words that include each other
+    randomWords = randomWords.filter((word) => !words.some((otherWord) => {
+      return word.nameRO.includes(otherWord.nameRO) || word.nameEN.includes(otherWord.nameEN) ||
+        otherWord.nameRO.includes(word.nameRO) || otherWord.nameEN.includes(word.nameEN)
+    }))
+    words.push(...randomWords.sort(() => Math.random() - Math.random()).slice(0, context.multipleChoice.numberOfChoices - words.length))
   }
   // choose random words and answer
   const randomWords = chooseRandomWords(words)
   // choose random input and output types
   const { a: inputType, b: outputType } = possibleTypes[context.match.currentIndex % possibleTypes.length]
   // update context
-  context.usedWords.push(...randomWords.map((word) => word.id))
+  const randomWordIndex = Math.floor(Math.random() * randomWords.length)
+  context.usedWords.push(randomWords[randomWordIndex].id)
   context.match.currentIndex++
   return {
-    question: "Match the given elements",
+    question: "Match the given words",
     words: randomWords,
     type: QuizType.Match,
     inputType: inputType,

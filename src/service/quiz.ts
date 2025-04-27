@@ -90,7 +90,7 @@ const generateMultipleChoiceQuiz = (lesson: ILesson, context: GenerationContext)
   // add the other data types to the input types
   const remainingInputTypes = Object.values(QuizDataType).filter((type) => type !== outputType) as QuizDataType[]
   return {
-    question: `What is the ${outputType.toLowerCase()} of the word?`,
+    question: `What is the correct ${outputType.toLowerCase()}?`,
     inputTypes: remainingInputTypes,
     outputType: outputType,
     words: [...randomWords],
@@ -121,7 +121,7 @@ const generateMatchQuiz = (lesson: ILesson, context: GenerationContext): IMatchQ
   context.usedWords.push(randomWords[randomWordIndex].id)
   context.match.currentIndex++
   return {
-    question: "Match the given words",
+    question: "Match the words",
     words: [...randomWords],
     type: QuizType.Match,
     inputType: inputType,

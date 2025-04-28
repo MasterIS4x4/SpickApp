@@ -20,6 +20,7 @@ export const Preferences = () => {
     if(darkMode !== isDarkMode) {
       toggleDarkMode()
     }
+    setPreference('darkMode', darkMode);
     savePreferencesToStorage({...preferences, darkMode})
       .then(r => console.log("Saved preferences"))
   }

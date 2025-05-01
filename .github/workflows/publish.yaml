@@ -2,7 +2,7 @@ name: Publish app to GitHub Pages
 on:
   push:
     branches:
-      - master
+      - '*'  # This allows any branch
   workflow_dispatch:
 #    inputs:
 #      force:
@@ -40,8 +40,18 @@ jobs:
           cache: 'npm'
           cache-dependency-path: package-lock.json
 
+      - name: Cache node_modules
+        uses: actions/cache@v4
+        id: cache-node-modules
+        with:
+          path: node_modules
+          key: ${{ runner.os }}-node-modules-${{ hashFiles('package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node-modules-
+
       - name: Install dependencies
-        run: npm install
+        if: steps.cache-node-modules.outputs.cache-hit != 'true'
+        run: npm ci
 
       - name: Build the application
         run: npm run build

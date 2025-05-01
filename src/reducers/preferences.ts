@@ -4,6 +4,7 @@ import {RootState} from "../store"
 
 export const initialPreferences = {
   darkMode: true,
+  isAppInstalled: false,
 } as Preferences
 
 export const preferencesSlice = createSlice({
@@ -19,9 +20,12 @@ export const preferencesSlice = createSlice({
     setDarkMode: (state, action: PayloadAction<boolean>) => {
       state.darkMode = action.payload
     },
+    setIsAppInstalled: (state, action: PayloadAction<boolean>) => {
+      state.isAppInstalled = action.payload
+    },
   }
 })
 
-export const {setPreferences, setDarkMode} = preferencesSlice.actions
+export const {setPreferences, setDarkMode, setIsAppInstalled} = preferencesSlice.actions
 export default preferencesSlice.reducer
 export const preferencesSelector = (state: RootState): Preferences => state.preferences

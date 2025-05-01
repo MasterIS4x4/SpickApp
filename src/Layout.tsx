@@ -2,6 +2,7 @@ import {IonButtons, IonContent, IonHeader, IonImg, IonItem, IonList, IonMenu, Io
 import {useAppSelector} from "./store"
 import {navigationSelector} from "./reducers/navigation"
 import {basePath} from "./App"
+import {InstallAppButton} from "./components/InstallAppButton"
 
 const MenuEntry = ({title, path, menu = 'left-menu'}: {title: string, path: string, menu?: string}) => (
   <IonMenuToggle autoHide={false} menu={menu}>
@@ -36,6 +37,7 @@ export const Layout = ({children}) => {
               <IonMenuButton></IonMenuButton>
             </IonButtons>
             <IonTitle>{navigationState.title}</IonTitle>
+            <div slot="end"> <InstallAppButton /> </div>
           </IonToolbar>
         </IonHeader>
         {children}

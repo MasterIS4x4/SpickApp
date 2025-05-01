@@ -60,22 +60,6 @@
       "purpose": "maskable"
     }
   ],
-  "screenshots": [
-    {
-      "src": "/SpickApp/ss-desk.png",
-      "sizes": "1280x720",
-      "type": "image/png",
-      "focus_mode": "center",
-      "form_factor": "wide"
-    },
-    {
-      "src": "/SpickApp/ss-mobile.png",
-      "sizes": "720x1280",
-      "type": "image/png",
-      "focus_mode": "center",
-      "form_factor": "narrow"
-    }
-  ],
   "workbox": {
     "globPatterns": ["**/*.{js,css,html,ico,png,svg,json}"]
   },

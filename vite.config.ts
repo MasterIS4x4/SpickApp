@@ -15,94 +15,33 @@ export default defineConfig({
     legacy(),
     VitePWA({
       registerType: 'autoUpdate',
-      manifest: { // copy manifest from public/manifest.json
-        "short_name": "SpickApp",
-        "name": "SpickApp",
-        "description": "Romanian learning app for foreign, especially couriers.",
-        "icons": [
+      workbox: {
+        cleanupOutdatedCaches: true,
+        runtimeCaching: [
           {
-            "src": "/SpickApp/spickapp-256.png",
-            "sizes": "256x256",
-            "type": "image/png"
+            urlPattern: new RegExp(`^https://masteris4x4.github.io/SpickAppGithubAPI/.*`),
+            handler: 'NetworkFirst', // use network if available, but fallback to cache
+            options: {
+              cacheName: 'api-cache',
+              expiration: {
+                maxEntries: 100,
+                maxAgeSeconds: 60 * 60 * 24 * 7 * 2, // 2 week
+              },
+            },
           },
           {
-            "src": "/SpickApp/spickapp-192.png",
-            "sizes": "192x192",
-            "type": "image/png"
-          },
-          {
-            "src": "/SpickApp/spickapp-128.png",
-            "sizes": "128x128",
-            "type": "image/png"
-          },
-          {
-            "src": "/SpickApp/spickapp-96.png",
-            "sizes": "96x96",
-            "type": "image/png"
-          },
-          {
-            "src": "/SpickApp/spickapp-64.png",
-            "sizes": "64x64",
-            "type": "image/png"
-          },
-          {
-            "src": "/SpickApp/spickapp-48.png",
-            "sizes": "48x48",
-            "type": "image/png"
-          },
-          {
-            "src": "/SpickApp/spickapp-32.png",
-            "sizes": "32x32",
-            "type": "image/png"
-          },
-          {
-            "src": "/SpickApp/spickapp-24.png",
-            "sizes": "24x24",
-            "type": "image/png"
-          },
-          {
-            "src": "/SpickApp/spickapp-16.png",
-            "sizes": "16x16",
-            "type": "image/png"
-          },
-          {
-            "src": "/SpickApp/spickapp-512.png",
-            "sizes": "512x512",
-            "type": "image/png"
-          },
-          {
-            "src": "/SpickApp/spickapp-512.png",
-            "type": "image/png",
-            "sizes": "512x512",
-            "purpose": "maskable"
+            urlPattern: new RegExp(`^https://masteris4x4.github.io/SpickApp/.*`),
+            handler: 'StaleWhileRevalidate', // use cache if available, but update in the background
+            options: {
+              cacheName: 'static-web-app-cache',
+              expiration: {
+                maxEntries: 500, // ensure we cache enough resources
+                maxAgeSeconds: 60 * 60 * 24 * 7 * 2, // 2 week
+              },
+            },
           }
         ],
-        "screenshots": [
-          {
-            "src": "/SpickApp/ss-desk.png",
-            "sizes": "1280x720",
-            "type": "image/png",
-            "focus_mode": "center",
-            "form_factor": "wide"
-          },
-          {
-            "src": "/SpickApp/ss-mobile.png",
-            "sizes": "720x1280",
-            "type": "image/png",
-            "focus_mode": "center",
-            "form_factor": "narrow"
-          }
-        ],
-        "workbox": {
-          "globPatterns": ["**/*.{js,css,html,ico,png,svg,json}"],
-        },
-        "start_url": "/SpickApp/",
-        "display": "standalone",
-        "theme_color": "#ffffff",
-        "background_color": "#ffffff",
-        "orientation": "portrait",
-        "display_override": ["standalone", "browser"]
-      }
+      },
     }),
   ],
   test: {

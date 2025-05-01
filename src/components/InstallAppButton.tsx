@@ -33,7 +33,6 @@ export const InstallAppButton = () => {
 
     const handleAppInstalled = () => {
       setIsVisible(false)
-      // @ts-ignore
       dispatch(setIsAppInstalled(true)) // note: save to storage is not called because maybe the user will uninstall the app and we won't know
     }
 

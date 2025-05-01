@@ -26,7 +26,6 @@ export const LessonPage = ({history}) => {
   const [hoveredIndex, setHoveredIndex] = useState<number>(-1)
 
   useEffect(() => {
-    //@ts-ignore
     dispatch(setCurrentTab({title: 'Lesson ' + id}))
     // Fetch lessons from the API or local storage
     getLesson(id).then(lesson => {

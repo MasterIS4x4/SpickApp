@@ -12,7 +12,6 @@ export const Preferences = () => {
   const {isDarkMode, toggleDarkMode} = useDarkMode()
 
   useEffect(() => {
-    //@ts-ignore
     dispatch(setCurrentTab({title: 'Preferences'}))
   }, [])
 
@@ -27,7 +26,6 @@ export const Preferences = () => {
 
   const setPreference = (key: string, value: any) => {
     const newPreferences = {...preferences, [key]: value}
-    // @ts-ignore
     dispatch(setPreferences(newPreferences))
     savePreferencesToStorage(newPreferences)
       .then(r => console.log("Saved preferences"))

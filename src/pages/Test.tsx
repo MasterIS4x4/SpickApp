@@ -7,7 +7,6 @@ export const Test = () => {
   const dispatch = useAppDispatch()
 
   useEffect(() => {
-    //@ts-ignore
     dispatch(setCurrentTab({title: 'Test'}))
   }, [])
 

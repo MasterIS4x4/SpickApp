@@ -62,11 +62,9 @@ const App = () => {
     getPreferencesFromStorage().then((preferences) => {
       if(preferences.darkMode !== isDarkMode)
         toggleDarkMode()
-      // @ts-ignore
       dispatch(setPreferences(preferences))
     }).catch((err) => {
       console.error("Error fetching preferences", err)
-      // @ts-ignore
       dispatch(setPreferences(initialPreferences))
     })
   }, [])

@@ -13,7 +13,6 @@ export const LessonsPage = () => {
   const [lessons, setLessons] = useState<ILesson[]>([])
 
   useEffect(() => {
-    //@ts-ignore
     dispatch(setCurrentTab({title: 'Lessons'}))
     // Fetch lessons from the API or local storage
     getLessons().then(lessons => {

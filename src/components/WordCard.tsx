@@ -1,22 +1,13 @@
-import { IWord } from '../model/lesson';
-import { QuizDataType } from '../model/quiz';
-import {
-  IonCard,
-  IonCol,
-  IonGrid,
-  IonItem,
-  IonLabel,
-  IonList,
-  IonRow,
-  IonText,
-} from '@ionic/react';
-import { DataTypeRenderer } from './DataTypeRenderer';
-import { Fragment } from 'react';
+import { IWord } from '../model/lesson'
+import { QuizDataType } from '../model/quiz'
+import { IonCard, IonCol, IonGrid, IonItem, IonLabel, IonList, IonRow, IonText } from '@ionic/react'
+import { DataTypeRenderer } from './DataTypeRenderer'
+import { Fragment } from 'react'
 
 interface WordCardProps {
-  word: IWord;
-  types: QuizDataType[];
-  showLabel?: boolean;
+  word: IWord
+  types: QuizDataType[]
+  showLabel?: boolean
 }
 
 export const WordCard = (props: WordCardProps) => {
@@ -37,5 +28,5 @@ export const WordCard = (props: WordCardProps) => {
         </Fragment>
       ))}
     </div>
-  );
-};
+  )
+}

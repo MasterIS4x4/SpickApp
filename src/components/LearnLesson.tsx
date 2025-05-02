@@ -1,17 +1,17 @@
-import { ILesson } from '../model/lesson';
-import YouTube from 'react-youtube';
-import { dvhToPx, dvwToPx } from '../utils';
-import { useEffect, useState } from 'react';
+import { ILesson } from '../model/lesson'
+import YouTube from 'react-youtube'
+import { dvhToPx, dvwToPx } from '../utils'
+import { useEffect, useState } from 'react'
 
 interface LearnLessonProps {
-  lesson: ILesson;
-  autoPlay?: boolean;
-  onVideoEnd?: () => void;
+  lesson: ILesson
+  autoPlay?: boolean
+  onVideoEnd?: () => void
 }
 
 interface Size {
-  width: number;
-  height: number;
+  width: number
+  height: number
 }
 
 /**
@@ -21,28 +21,28 @@ export const LearnLesson = (props: LearnLessonProps) => {
   const [size, setSize] = useState<Size>({
     width: dvwToPx(95),
     height: dvhToPx(75),
-  });
+  })
 
   useEffect(() => {
     const handleResize = () => {
       setSize({
         width: dvwToPx(95),
         height: dvhToPx(75),
-      });
-    };
-    window.addEventListener('resize', handleResize);
+      })
+    }
+    window.addEventListener('resize', handleResize)
     return () => {
-      window.removeEventListener('resize', handleResize);
-    };
-  }, []);
+      window.removeEventListener('resize', handleResize)
+    }
+  }, [])
 
   const getVideoId = (videoUrl: string) => {
-    const tokens = videoUrl.split('=');
+    const tokens = videoUrl.split('=')
     if (tokens.length > 1) {
-      return tokens[1];
+      return tokens[1]
     }
-    throw new Error('Invalid video URL');
-  };
+    throw new Error('Invalid video URL')
+  }
 
   return (
     // full with and height
@@ -62,14 +62,14 @@ export const LearnLesson = (props: LearnLessonProps) => {
           }}
           onReady={event => {
             if (props.autoPlay) {
-              event.target?.playVideo();
+              event.target?.playVideo()
             }
           }}
           onEnd={() => {
-            props.onVideoEnd?.();
+            props.onVideoEnd?.()
           }}
         />
       )}
     </div>
-  );
-};
+  )
+}

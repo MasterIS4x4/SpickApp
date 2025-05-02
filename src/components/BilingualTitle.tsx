@@ -1,4 +1,4 @@
-import { IonText, IonRow, IonCol, IonGrid, IonImg } from '@ionic/react';
+import { IonText, IonRow, IonCol, IonGrid, IonImg } from '@ionic/react'
 
 export const BilingualTitle = ({ ro, eng }: { ro: string; eng: string }) => {
   // display ro in the left and eng in the right
@@ -20,5 +20,5 @@ export const BilingualTitle = ({ ro, eng }: { ro: string; eng: string }) => {
         </IonRow>
       </IonGrid>
     </div>
-  );
-};
+  )
+}

@@ -1,36 +1,36 @@
-import { IWord } from '../model/lesson';
-import { QuizDataType } from '../model/quiz';
-import { IonImg, IonText } from '@ionic/react';
-import { useEffect, useState } from 'react';
+import { IWord } from '../model/lesson'
+import { QuizDataType } from '../model/quiz'
+import { IonImg, IonText } from '@ionic/react'
+import { useEffect, useState } from 'react'
 
 interface DataTypeRendererProps {
-  word: IWord;
-  type: QuizDataType;
+  word: IWord
+  type: QuizDataType
 }
 
 export const DataTypeRenderer = (props: DataTypeRendererProps) => {
-  const { word, type } = props;
-  const [audioUrl, setAudioUrl] = useState<string | undefined>(undefined);
-  const [audioType, setAudioType] = useState<string | undefined>(undefined);
-  const [imageUrl, setImageUrl] = useState<string | undefined>(undefined);
+  const { word, type } = props
+  const [audioUrl, setAudioUrl] = useState<string | undefined>(undefined)
+  const [audioType, setAudioType] = useState<string | undefined>(undefined)
+  const [imageUrl, setImageUrl] = useState<string | undefined>(undefined)
 
   useEffect(() => {
     if (Array.isArray(word.audioUrl)) {
-      const randomIndex = Math.floor(Math.random() * word.audioUrl.length);
-      setAudioUrl(word.audioUrl[randomIndex]);
-      setAudioType(word.audioUrl[randomIndex].split('.').pop() || 'mp3');
+      const randomIndex = Math.floor(Math.random() * word.audioUrl.length)
+      setAudioUrl(word.audioUrl[randomIndex])
+      setAudioType(word.audioUrl[randomIndex].split('.').pop() || 'mp3')
     } else {
-      setAudioUrl(word.audioUrl);
-      setAudioType(word.audioUrl.split('.').pop() || 'mp3');
+      setAudioUrl(word.audioUrl)
+      setAudioType(word.audioUrl.split('.').pop() || 'mp3')
     }
 
     if (Array.isArray(word.imageUrl)) {
-      const randomIndex = Math.floor(Math.random() * word.imageUrl.length);
-      setImageUrl(word.imageUrl[randomIndex]);
+      const randomIndex = Math.floor(Math.random() * word.imageUrl.length)
+      setImageUrl(word.imageUrl[randomIndex])
     } else {
-      setImageUrl(word.imageUrl);
+      setImageUrl(word.imageUrl)
     }
-  }, [word]);
+  }, [word])
 
   switch (type) {
     case QuizDataType.Text:
@@ -38,7 +38,7 @@ export const DataTypeRenderer = (props: DataTypeRendererProps) => {
         <IonText style={{ fontSize: '1rem' }}>
           {word.nameRO} - {word.nameEN}
         </IonText>
-      );
+      )
     case QuizDataType.Audio:
       return audioUrl ? (
         <audio controls>
@@ -47,7 +47,7 @@ export const DataTypeRenderer = (props: DataTypeRendererProps) => {
         </audio>
       ) : (
         'Audio not available'
-      );
+      )
     case QuizDataType.Image:
       return (
         <IonImg
@@ -62,8 +62,8 @@ export const DataTypeRenderer = (props: DataTypeRendererProps) => {
           }}
           // className="responsive-image"
         />
-      );
+      )
     default:
-      return null;
+      return null
   }
-};
+}

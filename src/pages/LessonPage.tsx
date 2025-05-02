@@ -6,19 +6,19 @@ import {
   IonItemDivider,
   IonLabel,
   IonList,
-} from '@ionic/react';
-import { useAppDispatch, useAppSelector } from '../store';
-import { useEffect, useState } from 'react';
-import { setCurrentTab } from '../reducers/navigation';
-import { ILesson } from '../model/lesson';
-import { getLesson, getNextLesson } from '../service/lesson';
-import { LearnLesson } from '../components/LearnLesson';
-import { generateQuizzes } from '../service/quiz';
-import { Quizzes } from '../components/Quizzes';
-import { useParams } from 'react-router';
-import { IQuiz, QuizDataType } from '../model/quiz';
-import { WordCard } from '../components/WordCard';
-import { basePath } from '../App';
+} from '@ionic/react'
+import { useAppDispatch, useAppSelector } from '../store'
+import { useEffect, useState } from 'react'
+import { setCurrentTab } from '../reducers/navigation'
+import { ILesson } from '../model/lesson'
+import { getLesson, getNextLesson } from '../service/lesson'
+import { LearnLesson } from '../components/LearnLesson'
+import { generateQuizzes } from '../service/quiz'
+import { Quizzes } from '../components/Quizzes'
+import { useParams } from 'react-router'
+import { IQuiz, QuizDataType } from '../model/quiz'
+import { WordCard } from '../components/WordCard'
+import { basePath } from '../App'
 
 enum LessonStatus {
   LEARNING,
@@ -27,49 +27,49 @@ enum LessonStatus {
 }
 
 export const LessonPage = ({ history }) => {
-  const dispatch = useAppDispatch();
-  const params = useParams<{ id: string }>();
-  const id = params.id;
-  const [lesson, setLesson] = useState<ILesson | undefined>();
-  const [quizzes, setQuizzes] = useState<IQuiz[]>([]);
-  const [status, setStatus] = useState<LessonStatus>(LessonStatus.LEARNING);
-  const [hoveredIndex, setHoveredIndex] = useState<number>(-1);
+  const dispatch = useAppDispatch()
+  const params = useParams<{ id: string }>()
+  const id = params.id
+  const [lesson, setLesson] = useState<ILesson | undefined>()
+  const [quizzes, setQuizzes] = useState<IQuiz[]>([])
+  const [status, setStatus] = useState<LessonStatus>(LessonStatus.LEARNING)
+  const [hoveredIndex, setHoveredIndex] = useState<number>(-1)
 
   useEffect(() => {
-    dispatch(setCurrentTab({ title: 'Lesson ' + id }));
+    dispatch(setCurrentTab({ title: 'Lesson ' + id }))
     // Fetch lessons from the API or local storage
     getLesson(id)
       .then(lesson => {
-        setLesson(lesson);
-        const quizzes = generateQuizzes(lesson);
-        console.log('Quizzes: ', quizzes);
-        setQuizzes(quizzes);
-        setStatus(LessonStatus.LEARNING);
+        setLesson(lesson)
+        const quizzes = generateQuizzes(lesson)
+        console.log('Quizzes: ', quizzes)
+        setQuizzes(quizzes)
+        setStatus(LessonStatus.LEARNING)
       })
       .catch(err => {
-        alert('Error fetching lessons. DB may be not available');
-      });
+        alert('Error fetching lessons. DB may be not available')
+      })
     // reset status to learning
-  }, [params.id]);
+  }, [params.id])
 
   const startQuiz = () => {
-    setStatus(LessonStatus.QUIZ);
-  };
+    setStatus(LessonStatus.QUIZ)
+  }
 
   const continueLearning = () => {
     getNextLesson(id)
       .then(nextLesson => {
         if (nextLesson) {
-          history.push(basePath + 'lessons/' + nextLesson.id);
+          history.push(basePath + 'lessons/' + nextLesson.id)
         } else {
           // go to lessons page. no next lesson available
-          history.push(basePath + 'lessons');
+          history.push(basePath + 'lessons')
         }
       })
       .catch(err => {
         // go to lessons page. no next lesson available
-      });
-  };
+      })
+  }
 
   return (
     <IonContent
@@ -144,5 +144,5 @@ export const LessonPage = ({ history }) => {
         </>
       )}
     </IonContent>
-  );
-};
+  )
+}

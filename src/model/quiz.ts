@@ -1,4 +1,4 @@
-import { IWord } from './lesson';
+import { IWord } from './lesson'
 
 export enum QuizType {
   MultipleChoice = 'multipleChoice',
@@ -12,18 +12,18 @@ export enum QuizDataType {
 }
 
 export interface IQuiz {
-  question: string;
-  words: IWord[];
-  type: QuizType;
+  question: string
+  words: IWord[]
+  type: QuizType
 }
 
 export interface IMultipleChoiceQuiz extends IQuiz {
-  correct: number;
-  inputTypes: QuizDataType[];
-  outputType: QuizDataType;
+  correct: number
+  inputTypes: QuizDataType[]
+  outputType: QuizDataType
 }
 
 export interface IMatchQuiz extends IQuiz {
-  inputType: QuizDataType;
-  outputType: QuizDataType;
+  inputType: QuizDataType
+  outputType: QuizDataType
 }

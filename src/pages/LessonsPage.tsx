@@ -1,28 +1,28 @@
-import { IonContent, IonIcon, IonItem, IonLabel, IonList } from '@ionic/react';
-import { useAppDispatch, useAppSelector } from '../store';
-import { useEffect, useState } from 'react';
-import { setCurrentTab } from '../reducers/navigation';
-import { ILesson } from '../model/lesson';
-import { getLessons } from '../service/lesson';
-import { BilingualTitle } from '../components/BilingualTitle';
-import { book } from 'ionicons/icons';
-import { basePath } from '../App';
+import { IonContent, IonIcon, IonItem, IonLabel, IonList } from '@ionic/react'
+import { useAppDispatch, useAppSelector } from '../store'
+import { useEffect, useState } from 'react'
+import { setCurrentTab } from '../reducers/navigation'
+import { ILesson } from '../model/lesson'
+import { getLessons } from '../service/lesson'
+import { BilingualTitle } from '../components/BilingualTitle'
+import { book } from 'ionicons/icons'
+import { basePath } from '../App'
 
 export const LessonsPage = () => {
-  const dispatch = useAppDispatch();
-  const [lessons, setLessons] = useState<ILesson[]>([]);
+  const dispatch = useAppDispatch()
+  const [lessons, setLessons] = useState<ILesson[]>([])
 
   useEffect(() => {
-    dispatch(setCurrentTab({ title: 'Lessons' }));
+    dispatch(setCurrentTab({ title: 'Lessons' }))
     // Fetch lessons from the API or local storage
     getLessons()
       .then(lessons => {
-        setLessons(lessons);
+        setLessons(lessons)
       })
       .catch(err => {
-        alert('Error fetching lessons. DB may be not available');
-      });
-  }, []);
+        alert('Error fetching lessons. DB may be not available')
+      })
+  }, [])
 
   // TODO: mark current lesson
   // - display number of quizes done per lesson
@@ -44,5 +44,5 @@ export const LessonsPage = () => {
         ))}
       </IonList>
     </IonContent>
-  );
-};
+  )
+}

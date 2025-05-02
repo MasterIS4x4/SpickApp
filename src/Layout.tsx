@@ -11,30 +11,30 @@ import {
   IonPage,
   IonTitle,
   IonToolbar,
-} from '@ionic/react';
-import { useAppSelector } from './store';
-import { navigationSelector } from './reducers/navigation';
-import { basePath } from './App';
-import { InstallAppButton } from './components/InstallAppButton';
+} from '@ionic/react'
+import { useAppSelector } from './store'
+import { navigationSelector } from './reducers/navigation'
+import { basePath } from './App'
+import { InstallAppButton } from './components/InstallAppButton'
 
 const MenuEntry = ({
   title,
   path,
   menu = 'left-menu',
 }: {
-  title: string;
-  path: string;
-  menu?: string;
+  title: string
+  path: string
+  menu?: string
 }) => (
   <IonMenuToggle autoHide={false} menu={menu}>
     <IonItem button routerLink={path}>
       {title}
     </IonItem>
   </IonMenuToggle>
-);
+)
 
 export const Layout = ({ children }) => {
-  const navigationState = useAppSelector(navigationSelector);
+  const navigationState = useAppSelector(navigationSelector)
 
   return (
     <>
@@ -73,5 +73,5 @@ export const Layout = ({ children }) => {
         {children}
       </IonPage>
     </>
-  );
-};
+  )
+}

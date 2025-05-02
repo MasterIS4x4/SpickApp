@@ -1,5 +1,4 @@
-
 export interface Preferences {
-  darkMode: boolean
-  isAppInstalled: boolean
+  darkMode: boolean;
+  isAppInstalled: boolean;
 }

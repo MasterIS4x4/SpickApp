@@ -1,35 +1,43 @@
-import {useAppDispatch, useAppSelector} from "../store"
-import {preferencesSelector, setPreferences} from "../reducers/preferences"
-import {useEffect, useState} from "react"
-import {setCurrentTab} from "../reducers/navigation"
-import {IonContent, IonItem, IonLabel, IonList, IonListHeader, IonRange, IonToggle} from "@ionic/react"
-import {useDarkMode} from "../hooks/useDarkMode"
-import {savePreferencesToStorage} from "../storage/preferences"
+import { useAppDispatch, useAppSelector } from '../store';
+import { preferencesSelector, setPreferences } from '../reducers/preferences';
+import { useEffect, useState } from 'react';
+import { setCurrentTab } from '../reducers/navigation';
+import {
+  IonContent,
+  IonItem,
+  IonLabel,
+  IonList,
+  IonListHeader,
+  IonRange,
+  IonToggle,
+} from '@ionic/react';
+import { useDarkMode } from '../hooks/useDarkMode';
+import { savePreferencesToStorage } from '../storage/preferences';
 
 export const Preferences = () => {
-  const dispatch = useAppDispatch()
-  const preferences = useAppSelector(preferencesSelector)
-  const {isDarkMode, toggleDarkMode} = useDarkMode()
+  const dispatch = useAppDispatch();
+  const preferences = useAppSelector(preferencesSelector);
+  const { isDarkMode, toggleDarkMode } = useDarkMode();
 
   useEffect(() => {
-    dispatch(setCurrentTab({title: 'Preferences'}))
-  }, [])
+    dispatch(setCurrentTab({ title: 'Preferences' }));
+  }, []);
 
   const setDarkMode = (darkMode: boolean) => {
-    if(darkMode !== isDarkMode) {
-      toggleDarkMode()
+    if (darkMode !== isDarkMode) {
+      toggleDarkMode();
     }
     setPreference('darkMode', darkMode);
-    savePreferencesToStorage({...preferences, darkMode})
-      .then(r => console.log("Saved preferences"))
-  }
+    savePreferencesToStorage({ ...preferences, darkMode }).then(r =>
+      console.log('Saved preferences')
+    );
+  };
 
   const setPreference = (key: string, value: any) => {
-    const newPreferences = {...preferences, [key]: value}
-    dispatch(setPreferences(newPreferences))
-    savePreferencesToStorage(newPreferences)
-      .then(r => console.log("Saved preferences"))
-  }
+    const newPreferences = { ...preferences, [key]: value };
+    dispatch(setPreferences(newPreferences));
+    savePreferencesToStorage(newPreferences).then(r => console.log('Saved preferences'));
+  };
 
   return (
     <IonContent className="ion-padding">
@@ -38,7 +46,7 @@ export const Preferences = () => {
         <IonItem>
           <IonToggle
             checked={preferences.darkMode}
-            onIonChange={(e) => setDarkMode(e.detail.checked)}
+            onIonChange={e => setDarkMode(e.detail.checked)}
             justify="space-between"
           >
             Dark Mode
@@ -46,5 +54,5 @@ export const Preferences = () => {
         </IonItem>
       </IonList>
     </IonContent>
-  )
-}
+  );
+};

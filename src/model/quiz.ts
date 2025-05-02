@@ -1,29 +1,29 @@
-import {IWord} from "./lesson"
+import { IWord } from './lesson';
 
 export enum QuizType {
-  MultipleChoice = "multipleChoice",
-  Match = "match",
+  MultipleChoice = 'multipleChoice',
+  Match = 'match',
 }
 
 export enum QuizDataType {
-  Text = "Text",
-  Image = "Image",
-  Audio = "Audio",
+  Text = 'Text',
+  Image = 'Image',
+  Audio = 'Audio',
 }
 
 export interface IQuiz {
-  question: string
-  words: IWord[]
-  type: QuizType
+  question: string;
+  words: IWord[];
+  type: QuizType;
 }
 
 export interface IMultipleChoiceQuiz extends IQuiz {
-  correct: number
-  inputTypes: QuizDataType[]
-  outputType: QuizDataType
+  correct: number;
+  inputTypes: QuizDataType[];
+  outputType: QuizDataType;
 }
 
 export interface IMatchQuiz extends IQuiz {
-  inputType: QuizDataType
-  outputType: QuizDataType
+  inputType: QuizDataType;
+  outputType: QuizDataType;
 }

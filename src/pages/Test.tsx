@@ -1,18 +1,18 @@
-import {IonContent} from "@ionic/react"
-import {useAppDispatch, useAppSelector} from "../store"
-import {useEffect} from "react"
-import {setCurrentTab} from "../reducers/navigation"
+import { IonContent } from '@ionic/react';
+import { useAppDispatch, useAppSelector } from '../store';
+import { useEffect } from 'react';
+import { setCurrentTab } from '../reducers/navigation';
 
 export const Test = () => {
-  const dispatch = useAppDispatch()
+  const dispatch = useAppDispatch();
 
   useEffect(() => {
-    dispatch(setCurrentTab({title: 'Test'}))
-  }, [])
+    dispatch(setCurrentTab({ title: 'Test' }));
+  }, []);
 
   return (
     <IonContent>
       <h1>Test</h1>
     </IonContent>
-  )
-}
+  );
+};

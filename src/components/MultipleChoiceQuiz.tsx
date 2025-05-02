@@ -1,45 +1,54 @@
-import {IMultipleChoiceQuiz, QuizDataType} from "../model/quiz"
-import {IonBadge, IonButton, IonCard, IonCol, IonGrid, IonItem, IonLabel, IonList, IonRow} from "@ionic/react"
-import {DataTypeRenderer} from "./DataTypeRenderer"
-import {WordCard} from "./WordCard"
-import {useEffect, useState} from "react"
+import { IMultipleChoiceQuiz, QuizDataType } from '../model/quiz';
+import {
+  IonBadge,
+  IonButton,
+  IonCard,
+  IonCol,
+  IonGrid,
+  IonItem,
+  IonLabel,
+  IonList,
+  IonRow,
+} from '@ionic/react';
+import { DataTypeRenderer } from './DataTypeRenderer';
+import { WordCard } from './WordCard';
+import { useEffect, useState } from 'react';
 
 interface MultipleChoiceQuizProps {
-  quiz: IMultipleChoiceQuiz
-  onNext: () => void
+  quiz: IMultipleChoiceQuiz;
+  onNext: () => void;
 }
 
 /**
  * MultipleChoiceQuiz component - from multiple choices, select *ONLY* the correct ONE
  */
 export const MultipleChoiceQuiz = (props: MultipleChoiceQuizProps) => {
-  const correctWord = props.quiz.words[props.quiz.correct]
-  const inputTypes = props.quiz.inputTypes
-  const outputType = props.quiz.outputType
-  const words = props.quiz.words
-  const correct = props.quiz.correct
+  const correctWord = props.quiz.words[props.quiz.correct];
+  const inputTypes = props.quiz.inputTypes;
+  const outputType = props.quiz.outputType;
+  const words = props.quiz.words;
+  const correct = props.quiz.correct;
 
-  const [selected, setSelected] = useState([])
-  const [isSuccess, setIsSuccess] = useState(false)
+  const [selected, setSelected] = useState([]);
+  const [isSuccess, setIsSuccess] = useState(false);
 
   const onElementClick = (index: number) => {
     if (!selected.includes(index) && !isSuccess) {
-      setSelected((prevSelected) => [...prevSelected, index])
+      setSelected(prevSelected => [...prevSelected, index]);
       if (index === correct) {
-        setIsSuccess(true)
+        setIsSuccess(true);
         // TODO: handle correct answer: play audio, vibrate, etc.
-      }
-      else {
+      } else {
         // TODO: handle wrong answer: play audio, vibrate, etc.
       }
     }
-  }
+  };
 
   const nextWord = () => {
-    setSelected([])
-    setIsSuccess(false)
-    props.onNext()
-  }
+    setSelected([]);
+    setIsSuccess(false);
+    props.onNext();
+  };
 
   return (
     <div className="ion-padding">
@@ -55,18 +64,37 @@ export const MultipleChoiceQuiz = (props: MultipleChoiceQuizProps) => {
               style={{
                 textAlign: 'center',
                 marginBottom: '.5rem', // Add some spacing between rows on mobile
-                border: '2px solid ' + (selected.includes(index) ?
-                  (isSuccess && index === correct ? 'var(--ion-color-success)' : 'var(--ion-color-danger)') : 'var(--ion-color-primary)'),
+                border:
+                  '2px solid ' +
+                  (selected.includes(index)
+                    ? isSuccess && index === correct
+                      ? 'var(--ion-color-success)'
+                      : 'var(--ion-color-danger)'
+                    : 'var(--ion-color-primary)'),
                 borderRadius: 10,
               }}
               onClick={() => outputType !== QuizDataType.Audio && onElementClick(index)}
             >
-              <div style={{ display: 'flex', alignItems: 'center', gap: '.5rem', //justifyContent: 'center',
-                flexDirection: outputType === QuizDataType.Image ? 'column-reverse' : 'row'}}>
-                <IonBadge style={{padding: ".75rem", fontSize: "1.5rem",
-                  backgroundColor: selected.includes(index) ?
-                    (isSuccess && index === correct ? 'var(--ion-color-success)' : 'var(--ion-color-danger)') : 'var(--ion-color-primary)',
-                  }} onClick={() => onElementClick(index) }>
+              <div
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '.5rem', //justifyContent: 'center',
+                  flexDirection: outputType === QuizDataType.Image ? 'column-reverse' : 'row',
+                }}
+              >
+                <IonBadge
+                  style={{
+                    padding: '.75rem',
+                    fontSize: '1.5rem',
+                    backgroundColor: selected.includes(index)
+                      ? isSuccess && index === correct
+                        ? 'var(--ion-color-success)'
+                        : 'var(--ion-color-danger)'
+                      : 'var(--ion-color-primary)',
+                  }}
+                  onClick={() => onElementClick(index)}
+                >
                   {index + 1}
                 </IonBadge>
                 <DataTypeRenderer word={word} type={props.quiz.outputType} />
@@ -75,13 +103,13 @@ export const MultipleChoiceQuiz = (props: MultipleChoiceQuizProps) => {
           ))}
         </IonRow>
       </IonGrid>
-      {isSuccess &&
+      {isSuccess && (
         <div style={{ display: 'flex', justifyContent: 'center' }}>
           <IonButton onClick={nextWord} color="primary">
             Next
           </IonButton>
         </div>
-      }
+      )}
     </div>
-  )
-}
+  );
+};

@@ -1,6 +1,13 @@
 // Quiz generator
 import { ILesson, IWord } from '../model/lesson'
-import { IMatchQuiz, IMultipleChoiceQuiz, IQuiz, QuizDataType, QuizType } from '../model/quiz'
+import {
+  IMatchQuiz,
+  IMultipleChoiceQuiz,
+  IQuiz,
+  ISpeakingQuiz,
+  QuizDataType,
+  QuizType,
+} from '../model/quiz'
 
 const MATCH_NUMBER_OF_ELEMENTS = 3
 const MULTIPLE_CHOICE_NUMBER_OF_CHOICES = 3
@@ -185,6 +192,17 @@ export const generateQuizzes = (lesson: ILesson): IQuiz[] => {
     },
   }
   const quizzes: IQuiz[] = []
+
+  // TODO: Move to random part of lesson multiple times
+  const randomWord = lesson.words[Math.floor(Math.random() * lesson.words.length)]
+  const speakingQuiz: ISpeakingQuiz = {
+    question: 'Try to say this word aloud to your phone',
+    words: [randomWord],
+    type: QuizType.Speaking,
+    inputTypes: [QuizDataType.Audio],
+  }
+  quizzes.push(speakingQuiz)
+
   while (context.usedWords.length < lesson.words.length) {
     const quizType =
       Math.random() < MULTIPLE_CHOICE_QUIZ_CHANCE ? QuizType.MultipleChoice : QuizType.Match

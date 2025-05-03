@@ -12,6 +12,7 @@ import { WordCard } from '../components/WordCard'
 import { basePath } from '../App'
 import { lessonsSelector, setCurrentLesson, setLessons, setLessonStatus } from '../reducers/lessons'
 import { LessonState, LessonStatus } from '../model/states'
+import { SpeakingQuiz } from '../components/SpeakingQuiz'
 import { generateQuizzes } from '../service/quiz'
 import { arrowForwardOutline, refresh } from 'ionicons/icons'
 
@@ -32,6 +33,10 @@ export const LessonPage = ({ history }) => {
     dispatch(setCurrentTab({ title: 'Lesson ' + id }))
     dispatch(setCurrentLesson(id))
   }, [params.id])
+
+  const startSpeaking = () => {
+    dispatch(setLessonStatus({ lessonId: id, status: LessonStatus.SPEAKING }))
+  }
 
   const startQuiz = () => {
     dispatch(setLessonStatus({ lessonId: id, status: LessonStatus.QUIZ }))
@@ -70,7 +75,7 @@ export const LessonPage = ({ history }) => {
     >
       {status === LessonStatus.LEARNING && (
         <>
-          <LearnLesson lesson={lesson} onVideoEnd={startQuiz} autoPlay={true} />
+          <LearnLesson lesson={lesson} onVideoEnd={startSpeaking} autoPlay={true} />
           <div
             style={{
               display: 'flex',
@@ -79,12 +84,13 @@ export const LessonPage = ({ history }) => {
               marginTop: '.5rem',
             }}
           >
-            <IonButton onClick={startQuiz} style={{ margin: '1em' }}>
+            <IonButton onClick={startSpeaking} style={{ margin: '1em' }}>
               Start Quiz
             </IonButton>
           </div>
         </>
       )}
+      {status === LessonStatus.SPEAKING && <SpeakingQuiz words={lesson.words} onNext={startQuiz} />}
       {status === LessonStatus.QUIZ && (
         <>
           <Quizzes

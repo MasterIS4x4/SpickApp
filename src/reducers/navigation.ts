@@ -1,4 +1,4 @@
-import { NavigationState } from '../model/navigation'
+import { NavigationState } from '../model/states'
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 import { RootState } from '../store'
 

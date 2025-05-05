@@ -1,5 +1,6 @@
 import { Preferences } from '@capacitor/preferences'
-import { Preferences as PreferencesModel } from '../model/preferences'
+
+import { Preferences as PreferencesModel } from '../model/states'
 
 export const getPreferencesFromStorage = async (): Promise<PreferencesModel> => {
   return await Preferences.get({ key: 'preferences' }).then(data => {

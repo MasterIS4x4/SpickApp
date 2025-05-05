@@ -2,7 +2,7 @@
 
 import legacy from '@vitejs/plugin-legacy'
 import react from '@vitejs/plugin-react'
-import {VitePWA} from "vite-plugin-pwa"
+import { VitePWA } from 'vite-plugin-pwa'
 import { defineConfig } from 'vite'
 
 const basePath = '/SpickApp/'
@@ -39,14 +39,19 @@ export default defineConfig({
                 maxAgeSeconds: 60 * 60 * 24 * 7 * 2, // 2 week
               },
             },
-          }
+          },
         ],
       },
     }),
   ],
+  server: {
+    watch: {
+      usePolling: true,
+    },
+  },
   test: {
     globals: true,
     environment: 'jsdom',
     setupFiles: './src/setupTests.ts',
-  }
+  },
 })

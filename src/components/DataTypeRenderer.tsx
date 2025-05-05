@@ -41,7 +41,7 @@ export const DataTypeRenderer = (props: DataTypeRendererProps) => {
       )
     case QuizDataType.Audio:
       return audioUrl ? (
-        <audio controls>
+        <audio controls key={audioUrl}>
           <source src={audioUrl} type={'audio/' + audioType} />
           Your browser does not support the audio element.
         </audio>

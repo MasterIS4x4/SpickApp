@@ -3,20 +3,34 @@ import { useEffect, useState } from 'react'
 import { IonProgressBar } from '@ionic/react'
 import { MultipleChoiceQuiz } from './MultipleChoiceQuiz'
 import { CongratsAnimation } from './CongratsAnimation'
+import { useAppDispatch, useAppSelector } from '../store'
+import { lessonsSelector, setCurrentQuiz } from '../reducers/lessons'
+import { saveLessonsToStorage } from '../storage/lessons'
+import { getLessonQuizIndex } from '../service/lesson'
 
 interface QuizzesProps {
   quizzes: IQuiz[]
+  currentQuiz?: number
   onQuizChange?: (index: number) => void
   onQuizzesFinish?: () => void
 }
 
 export const Quizzes = (props: QuizzesProps) => {
-  const [currentQuizIndex, setCurrentQuizIndex] = useState(0)
+  const dispatch = useAppDispatch()
+
+  const [currentQuizIndex, setCurrentQuizIndex] = useState(props?.currentQuiz ?? 0)
   const [showCongrats, setShowCongrats] = useState(false)
   const [isQuizzesDone, setIsQuizzesDone] = useState(false)
 
+  const setQuizNumber = (index: number) => {
+    if (index >= 0 && index < props.quizzes.length) {
+      setCurrentQuizIndex(index)
+      dispatch(setCurrentQuiz(index))
+    }
+  }
+
   useEffect(() => {
-    setCurrentQuizIndex(0) // set to props.quizzes.length - 1 to test
+    setQuizNumber(props.currentQuiz ?? 0)
     setShowCongrats(false)
     setIsQuizzesDone(false)
   }, [])
@@ -34,7 +48,7 @@ export const Quizzes = (props: QuizzesProps) => {
     } else if (currentQuizIndex >= props.quizzes.length) {
       console.error('Invalid quiz index')
     } else {
-      setCurrentQuizIndex(prevIndex => prevIndex + 1)
+      setQuizNumber(currentQuizIndex + 1)
     }
   }
 

@@ -52,14 +52,19 @@ import { useAppDispatch, useAppSelector } from './store'
 import { useEffect } from 'react'
 import { Preferences } from './pages/Preferences'
 import { useDarkMode } from './hooks/useDarkMode'
-import { initialPreferences, setPreferences } from './reducers/preferences'
+import { initialPreferences, preferencesSelector, setPreferences } from './reducers/preferences'
 import { getPreferencesFromStorage } from './storage/preferences'
 import { LessonPage } from './pages/LessonPage'
+import { getLessonsFromStorage, saveLessonsToStorage } from './storage/lessons'
+import { getLessonQuizIndex, getLessons, updateLessonsState } from './service/lesson'
+import { lessonsSelector, setLessons, setLessonsWithQuizzes } from './reducers/lessons'
+import { LessonsState } from './model/states'
 
 setupIonicReact()
 
 const App = () => {
   const dispatch = useAppDispatch()
+  const lessonsState = useAppSelector(lessonsSelector)
   const { isDarkMode, toggleDarkMode } = useDarkMode()
 
   useEffect(() => {
@@ -72,7 +77,43 @@ const App = () => {
         console.error('Error fetching preferences', err)
         dispatch(setPreferences(initialPreferences))
       })
+    getLessonsFromStorage()
+      .then(oldLessons => {
+        // merge local storage lessons with the ones from the server
+        getLessons()
+          .then(newLessons => {
+            const updated = updateLessonsState(oldLessons, newLessons)
+            dispatch(setLessons(updated))
+          })
+          .catch(() => {
+            dispatch(setLessons(oldLessons))
+          })
+      })
+      .catch(() => {
+        // if local storage lessons are not available, fetch from server
+        getLessons()
+          .then(lessons => {
+            dispatch(setLessonsWithQuizzes(lessons))
+          })
+          .catch(err => {
+            console.error('Error fetching lessons', err)
+          })
+      })
   }, [])
+
+  useEffect(() => {
+    if (!lessonsState || !lessonsState.lessons || lessonsState.lessons.length === 0)
+      getLessons()
+        .then(lessons => {
+          dispatch(setLessonsWithQuizzes(lessons))
+        })
+        .catch(err => {
+          console.error('Error fetching lessons', err)
+        })
+    saveLessonsToStorage(lessonsState)
+      .then(() => console.log('Saved lessons', lessonsState))
+      .catch(err => console.error('Error saving lessons', err))
+  }, [lessonsState])
 
   return (
     <IonApp>

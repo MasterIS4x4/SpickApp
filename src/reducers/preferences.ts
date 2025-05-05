@@ -1,6 +1,6 @@
-import { Preferences } from '../model/preferences'
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 import { RootState } from '../store'
+import { Preferences } from '../model/states'
 
 export const initialPreferences = {
   darkMode: false,

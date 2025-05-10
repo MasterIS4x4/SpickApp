@@ -3,7 +3,7 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 import { RootState } from '../store'
 
 export const initialPreferences = {
-  darkMode: true,
+  darkMode: false,
   isAppInstalled: false,
 } as Preferences
 

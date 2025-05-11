@@ -4,7 +4,8 @@ import { preferencesSelector } from '../reducers/preferences'
 
 
 export const useDarkMode = () => {
-  const [isDarkMode, setIsDarkMode] = useState(useAppSelector(preferencesSelector).darkMode)
+  const perferences = useAppSelector(preferencesSelector)
+  const [isDarkMode, setIsDarkMode] = useState(perferences.darkMode)
 
   const toggleDarkPalette = (shouldAdd: boolean) => {
     document.documentElement.classList.toggle('ion-palette-dark', shouldAdd)

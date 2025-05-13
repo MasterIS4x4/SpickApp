@@ -19,6 +19,7 @@ import { useEffect, useState } from 'react'
 import { arrowForwardOutline } from 'ionicons/icons'
 import { Haptics, ImpactStyle } from '@capacitor/haptics'
 import { Capacitor } from '@capacitor/core'
+import { ConfettiBurst } from './ConfettiBurst'
 
 interface MultipleChoiceQuizProps {
   quiz: IMultipleChoiceQuiz
@@ -37,6 +38,7 @@ export const MultipleChoiceQuiz = (props: MultipleChoiceQuizProps) => {
 
   const [selected, setSelected] = useState([])
   const [isSuccess, setIsSuccess] = useState(false)
+  const [showConfetti, setShowConfetti] = useState(false)
 
   const giveHapticFeedback = async (style: ImpactStyle) => {
     if (Capacitor.isNativePlatform()) {
@@ -52,6 +54,9 @@ export const MultipleChoiceQuiz = (props: MultipleChoiceQuizProps) => {
       if (index === correct) {
         setIsSuccess(true)
         await giveHapticFeedback(ImpactStyle.Heavy)
+
+        setShowConfetti(true)
+        setTimeout(() => setShowConfetti(false), 3000)
       } else {
         await giveHapticFeedback(ImpactStyle.Heavy)
         // TODO: handle wrong answer: play audio, etc.
@@ -61,6 +66,7 @@ export const MultipleChoiceQuiz = (props: MultipleChoiceQuizProps) => {
 
   const nextWord = () => {
     setSelected([])
+    setShowConfetti(false)
     setIsSuccess(false)
     props.onNext()
   }
@@ -137,6 +143,7 @@ export const MultipleChoiceQuiz = (props: MultipleChoiceQuizProps) => {
           </IonButton>
         </div>
       )}
+      <ConfettiBurst trigger={showConfetti} />
     </div>
   )
 }

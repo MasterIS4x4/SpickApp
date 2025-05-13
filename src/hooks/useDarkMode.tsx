@@ -2,7 +2,6 @@ import { useState, useEffect } from 'react'
 import { useAppSelector } from '../store'
 import { preferencesSelector } from '../reducers/preferences'
 
-
 export const useDarkMode = () => {
   const perferences = useAppSelector(preferencesSelector)
   const [isDarkMode, setIsDarkMode] = useState(perferences.darkMode)

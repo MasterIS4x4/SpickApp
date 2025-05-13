@@ -2,6 +2,10 @@ ion-item {
   --transition: none;
 }
 
+.selected {
+  font-weight: bold;
+}
+
 /* Default (mobile) */
 .responsive-image {
   --image-max-width: 70vw;

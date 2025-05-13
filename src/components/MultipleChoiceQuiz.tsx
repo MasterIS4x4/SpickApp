@@ -17,6 +17,8 @@ import { DataTypeRenderer } from './DataTypeRenderer'
 import { WordCard } from './WordCard'
 import { useEffect, useState } from 'react'
 import { arrowForwardOutline } from 'ionicons/icons'
+import { Haptics, ImpactStyle } from '@capacitor/haptics'
+import { Capacitor } from '@capacitor/core'
 
 interface MultipleChoiceQuizProps {
   quiz: IMultipleChoiceQuiz
@@ -36,14 +38,23 @@ export const MultipleChoiceQuiz = (props: MultipleChoiceQuizProps) => {
   const [selected, setSelected] = useState([])
   const [isSuccess, setIsSuccess] = useState(false)
 
-  const onElementClick = (index: number) => {
+  const giveHapticFeedback = async (style: ImpactStyle) => {
+    if (Capacitor.isNativePlatform()) {
+      await Haptics.impact({ style })
+    } else if (navigator.vibrate) {
+      navigator.vibrate(style === ImpactStyle.Heavy ? 70 : 40)
+    }
+  }
+
+  const onElementClick = async (index: number) => {
     if (!selected.includes(index) && !isSuccess) {
       setSelected(prevSelected => [...prevSelected, index])
       if (index === correct) {
         setIsSuccess(true)
-        // TODO: handle correct answer: play audio, vibrate, etc.
+        await giveHapticFeedback(ImpactStyle.Heavy)
       } else {
-        // TODO: handle wrong answer: play audio, vibrate, etc.
+        await giveHapticFeedback(ImpactStyle.Heavy)
+        // TODO: handle wrong answer: play audio, etc.
       }
     }
   }

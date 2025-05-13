@@ -4,7 +4,10 @@ import {
   IonButton,
   IonCard,
   IonCol,
+  IonFab,
+  IonFabButton,
   IonGrid,
+  IonIcon,
   IonItem,
   IonLabel,
   IonList,
@@ -13,6 +16,7 @@ import {
 import { DataTypeRenderer } from './DataTypeRenderer'
 import { WordCard } from './WordCard'
 import { useEffect, useState } from 'react'
+import { arrowForwardOutline } from 'ionicons/icons'
 
 interface MultipleChoiceQuizProps {
   quiz: IMultipleChoiceQuiz
@@ -104,9 +108,21 @@ export const MultipleChoiceQuiz = (props: MultipleChoiceQuizProps) => {
         </IonRow>
       </IonGrid>
       {isSuccess && (
-        <div style={{ display: 'flex', justifyContent: 'center' }}>
-          <IonButton onClick={nextWord} color="primary">
+        <div
+          style={{
+            position: 'fixed',
+            bottom: '1rem',
+            right: '1rem',
+            left: '1rem',
+            zIndex: 100,
+            display: 'flex',
+            justifyContent: 'flex-end',
+            pointerEvents: 'none',
+          }}
+        >
+          <IonButton onClick={nextWord} color="success" style={{ pointerEvents: 'auto' }}>
             Next
+            <IonIcon icon={arrowForwardOutline} slot="end" />
           </IonButton>
         </div>
       )}

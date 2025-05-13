@@ -7,12 +7,13 @@ import { getLesson, getNextLesson } from '../service/lesson'
 import { LearnLesson } from '../components/LearnLesson'
 import { Quizzes } from '../components/Quizzes'
 import { useParams } from 'react-router'
-import { IQuiz, QuizDataType } from '../model/quiz'
+import { IQuiz, ISpeakingQuiz, QuizDataType, QuizType } from '../model/quiz'
 import { WordCard } from '../components/WordCard'
 import { basePath } from '../App'
 import { lessonsSelector, setCurrentLesson, setLessonStatus } from '../reducers/lessons'
 import { saveLessonsToStorage } from '../storage/lessons'
 import { LessonStatus } from '../model/states'
+import { SpeakingQuiz } from '../components/SpeakingQuiz'
 
 export const LessonPage = ({ history }) => {
   const dispatch = useAppDispatch()
@@ -26,10 +27,31 @@ export const LessonPage = ({ history }) => {
   const currentQuiz = lessonState?.currentQuiz
 
   const [hoveredIndex, setHoveredIndex] = useState<number>(-1)
+  const [speakingQuiz, setSpeakingQuiz] = useState<ISpeakingQuiz | null>(null)
 
   useEffect(() => {
     dispatch(setCurrentTab({ title: 'Lesson ' + id }))
-    dispatch(setCurrentLesson(id))
+    // Fetch lessons from the API or local storage
+    getLesson(id)
+      .then(lesson => {
+        setLesson(lesson)
+        const quizzes = generateQuizzes(lesson)
+        console.log('Quizzes: ', quizzes)
+        setQuizzes(quizzes)
+        setStatus(LessonStatus.LEARNING)
+
+        const speakingWords = [...lesson.words].sort(() => 0.5 - Math.random()).slice(0, 5)
+        setSpeakingQuiz({
+          question: 'Say the words out loud',
+          type: QuizType.Speaking,
+          words: speakingWords,
+          inputTypes: [QuizDataType.Text],
+        })
+      })
+      .catch(err => {
+        alert('Error fetching lessons. DB may be not available')
+      })
+    // reset status to learning
   }, [params.id])
 
   const startQuiz = () => {
@@ -77,7 +99,15 @@ export const LessonPage = ({ history }) => {
         <>
           <Quizzes currentQuiz={currentQuiz} quizzes={quizzes} onQuizzesFinish={onQuizFinish} />
         </>
+        <Quizzes quizzes={quizzes} onQuizzesFinish={() => setStatus(LessonStatus.SPEAKING)} />
       )}
+      {status === LessonStatus.SPEAKING && speakingQuiz && (
+        <SpeakingQuiz
+          quiz={speakingQuiz as ISpeakingQuiz}
+          onNext={() => setStatus(LessonStatus.DONE)}
+        />
+      )}
+
       {status === LessonStatus.DONE && (
         <>
           <div

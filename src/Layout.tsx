@@ -2,8 +2,10 @@ import {
   IonButtons,
   IonContent,
   IonHeader,
+  IonIcon,
   IonImg,
   IonItem,
+  IonLabel,
   IonList,
   IonMenu,
   IonMenuButton,
@@ -16,19 +18,30 @@ import { useAppSelector } from './store'
 import { navigationSelector } from './reducers/navigation'
 import { basePath } from './App'
 import { InstallAppButton } from './components/InstallAppButton'
+import { bookOutline, flaskOutline, optionsOutline } from 'ionicons/icons'
 
 const MenuEntry = ({
   title,
   path,
+  icon,
   menu = 'left-menu',
 }: {
   title: string
   path: string
+  icon: string
   menu?: string
 }) => (
   <IonMenuToggle autoHide={false} menu={menu}>
-    <IonItem button routerLink={path}>
-      {title}
+    <IonItem
+      button
+      routerLink={path}
+      routerDirection="root"
+      detail={false}
+      lines="none"
+      className={location.pathname === path ? 'selected' : ''}
+    >
+      <IonIcon icon={icon} slot="start" />
+      <IonLabel>{title}</IonLabel>
     </IonItem>
   </IonMenuToggle>
 )
@@ -51,9 +64,9 @@ export const Layout = ({ children }) => {
         </IonHeader>
         <IonContent className="ion-padding">
           <IonList>
-            <MenuEntry title="Lessons" path={basePath + 'lessons'} />
-            <MenuEntry title="Preferences" path={basePath + 'preferences'} />
-            <MenuEntry title="Test" path={basePath + 'test'} />
+            <MenuEntry title="Lessons" path={basePath + 'lessons'} icon={bookOutline} />
+            <MenuEntry title="Preferences" path={basePath + 'preferences'} icon={optionsOutline} />
+            <MenuEntry title="Test" path={basePath + 'test'} icon={flaskOutline} />
           </IonList>
         </IonContent>
       </IonMenu>

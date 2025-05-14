@@ -1,6 +1,13 @@
 // Quiz generator
 import { ILesson, IWord } from '../model/lesson'
-import { IMatchQuiz, IMultipleChoiceQuiz, IQuiz, QuizDataType, QuizType } from '../model/quiz'
+import {
+  IMatchQuiz,
+  IMultipleChoiceQuiz,
+  IQuiz,
+  ISpeakingQuiz,
+  QuizDataType,
+  QuizType,
+} from '../model/quiz'
 
 const MATCH_WORD_COUNT = 3
 const CHOICE_WORD_COUNT = 3

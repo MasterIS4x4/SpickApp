@@ -3,6 +3,7 @@ import { IWord } from './lesson'
 export enum QuizType {
   MultipleChoice = 'multipleChoice',
   Match = 'match',
+  Speaking = 'speaking',
 }
 
 export enum QuizDataType {
@@ -26,4 +27,8 @@ export interface IMultipleChoiceQuiz extends IQuiz {
 export interface IMatchQuiz extends IQuiz {
   inputType: QuizDataType
   outputType: QuizDataType
+}
+
+export interface ISpeakingQuiz extends IQuiz {
+  inputTypes: QuizDataType[]
 }

@@ -48,17 +48,30 @@ export const MultipleChoiceQuiz = (props: MultipleChoiceQuizProps) => {
     }
   }
 
+ const playAudio = async (audio: string) => {
+  try {
+    const audioElement = new Audio(audio)
+    audioElement.volume = 0.5
+    audioElement.loop = false
+    await audioElement.play()
+  } catch (error) {
+    console.warn('Audio playback failed:', error)
+  }
+}
+
   const onElementClick = async (index: number) => {
     if (!selected.includes(index) && !isSuccess) {
       setSelected(prevSelected => [...prevSelected, index])
       if (index === correct) {
         setIsSuccess(true)
         await giveHapticFeedback(ImpactStyle.Heavy)
+        await playAudio('/SpickApp/public/assets/audio/correct.mp3')
 
         setShowConfetti(true)
         setTimeout(() => setShowConfetti(false), 3000)
       } else {
         await giveHapticFeedback(ImpactStyle.Heavy)
+        await playAudio('/SpickApp/public/assets/audio/wrong.mp3')
         // TODO: handle wrong answer: play audio, etc.
       }
     }

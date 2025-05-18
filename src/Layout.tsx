@@ -63,11 +63,12 @@ export const Layout = ({ children }) => {
           </IonToolbar>
         </IonHeader>
         <IonContent className="ion-padding">
-          <IonList>
+          <IonList className="ion-margin-bottom">
             <MenuEntry title="Lessons" path={basePath + 'lessons'} icon={bookOutline} />
             <MenuEntry title="Preferences" path={basePath + 'preferences'} icon={optionsOutline} />
-            <MenuEntry title="Test" path={basePath + 'test'} icon={flaskOutline} />
+            {/*<MenuEntry title="Test" path={basePath + 'test'} icon={flaskOutline} />*/}
           </IonList>
+          <InstallAppButton />
         </IonContent>
       </IonMenu>
       <IonPage id="main-content">
@@ -77,10 +78,6 @@ export const Layout = ({ children }) => {
               <IonMenuButton></IonMenuButton>
             </IonButtons>
             <IonTitle>{navigationState.title}</IonTitle>
-            <div slot="end">
-              {' '}
-              <InstallAppButton />{' '}
-            </div>
           </IonToolbar>
         </IonHeader>
         {children}

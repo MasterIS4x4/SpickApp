@@ -1,25 +1,14 @@
 import { IMultipleChoiceQuiz, QuizDataType } from '../model/quiz'
-import {
-  IonBadge,
-  IonButton,
-  IonCard,
-  IonCol,
-  IonFab,
-  IonFabButton,
-  IonGrid,
-  IonIcon,
-  IonItem,
-  IonLabel,
-  IonList,
-  IonRow,
-} from '@ionic/react'
+import { IonBadge, IonButton, IonCol, IonGrid, IonIcon, IonRow } from '@ionic/react'
 import { DataTypeRenderer } from './DataTypeRenderer'
 import { WordCard } from './WordCard'
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { arrowForwardOutline } from 'ionicons/icons'
-import { Haptics, ImpactStyle } from '@capacitor/haptics'
-import { Capacitor } from '@capacitor/core'
+import { ImpactStyle } from '@capacitor/haptics'
 import { ConfettiBurst } from './ConfettiBurst'
+import { useInteractions } from '../hooks/useInteractions'
+import correctAudio from '../assets/audio/correct.mp3'
+import wrongAudio from '../assets/audio/wrong.mp3'
 
 interface MultipleChoiceQuizProps {
   quiz: IMultipleChoiceQuiz
@@ -40,39 +29,21 @@ export const MultipleChoiceQuiz = (props: MultipleChoiceQuizProps) => {
   const [isSuccess, setIsSuccess] = useState(false)
   const [showConfetti, setShowConfetti] = useState(false)
 
-  const giveHapticFeedback = async (style: ImpactStyle) => {
-    if (Capacitor.isNativePlatform()) {
-      await Haptics.impact({ style })
-    } else if (navigator.vibrate) {
-      navigator.vibrate(style === ImpactStyle.Heavy ? 70 : 40)
-    }
-  }
-
-  const playAudio = async (audio: string) => {
-    try {
-      const audioElement = new Audio(audio)
-      audioElement.volume = 0.5
-      audioElement.loop = false
-      await audioElement.play()
-    } catch (error) {
-      console.warn('Audio playback failed:', error)
-    }
-  }
+  const { giveHapticFeedback, playAudio } = useInteractions()
 
   const onElementClick = async (index: number) => {
     if (!selected.includes(index) && !isSuccess) {
       setSelected(prevSelected => [...prevSelected, index])
       if (index === correct) {
         setIsSuccess(true)
-        await giveHapticFeedback(ImpactStyle.Heavy)
-        await playAudio('/SpickApp/public/assets/audio/correct.mp3')
+        await giveHapticFeedback(ImpactStyle.Light)
+        await playAudio(correctAudio)
 
         setShowConfetti(true)
         setTimeout(() => setShowConfetti(false), 3000)
       } else {
         await giveHapticFeedback(ImpactStyle.Heavy)
-        await playAudio('/SpickApp/public/assets/audio/wrong.mp3')
-        // TODO: handle wrong answer: play audio, etc.
+        await playAudio(wrongAudio)
       }
     }
   }

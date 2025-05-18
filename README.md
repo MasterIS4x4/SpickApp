@@ -57,26 +57,6 @@ Other files in the `src` folder:
 
 ## Deployment
 
-Currently, the application is only hosted on GitHub Pages, but it can be hosted on any other static hosting service.
+Currently, the application is *automatically* hosted on GitHub Pages, but it can be hosted on any other static hosting service.
 
 Additionally, it also allows for the creation of mobile applications using Capacitor. To create a mobile app, follow the steps [here](https://capacitorjs.com/docs/getting-started).
-
-### How to Deploy
-
-1. Checkout to the `web` branch
-2. Rebase locally onto the branch you're working on
-3. Resolve any potential conflicts, and don’t forget to adjust the code (the main differences are usually in page paths)
-4. Run `npm run build` or `ionic build --prod` or `npm run predeploy`
-5. Run `npm run preview` to see how the application looks before publishing
-6. Run `npm run deploy` to publish the application
-
-This last step will create a commit on the `gh-pages` branch, which will be automatically published on GitHub Pages within a few minutes.
-
-> [!NOTE]  
-> You can also test the application on your phone to ensure its capability to function as a PWA on mobile devices.
-
-> [!WARNING]  
-> It is recommended to run step 5 before deploying to ensure the application looks and works correctly.
-
-> [!NOTE]  
-> To deploy, you need certain permissions on the GitHub repository. If you don’t have these permissions, contact one of the collaborators. However, once a pull request is accepted, it will be automatically deployed.

@@ -53,13 +53,6 @@ export const Preferences = () => {
     dispatch(setLessons({ lessons: [] }))
     await clearLessonsFromStorage()
     setIsClearDataPopoverOpen(false)
-    getLessons()
-      .then(lessons => {
-        dispatch(setLessonsWithQuizzes(lessons))
-      })
-      .catch(err => {
-        console.error('Error fetching lessons', err)
-      })
   }
 
   return (

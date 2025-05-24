@@ -11,15 +11,12 @@ import {
   IonList,
   IonListHeader,
   IonPopover,
-  IonRange,
   IonToggle,
 } from '@ionic/react'
 import { useDarkMode } from '../hooks/useDarkMode'
 import { savePreferencesToStorage } from '../storage/preferences'
-import { trashBinOutline, trashOutline } from 'ionicons/icons'
-import { clearLessonsFromStorage } from '../storage/lessons'
-import { getLessons } from '../service/lesson'
-import { setLessons, setLessonsWithQuizzes } from '../reducers/lessons'
+import { trashOutline } from 'ionicons/icons'
+import { setLessons } from '../reducers/lessons'
 
 export const Preferences = () => {
   const dispatch = useAppDispatch()
@@ -51,7 +48,6 @@ export const Preferences = () => {
 
   const clearData = async () => {
     dispatch(setLessons({ lessons: [] }))
-    await clearLessonsFromStorage()
     setIsClearDataPopoverOpen(false)
   }
 

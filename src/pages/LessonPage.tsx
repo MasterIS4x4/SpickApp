@@ -1,4 +1,4 @@
-import { IonButton, IonContent, IonItemDivider } from '@ionic/react'
+import { IonButton, IonContent, IonIcon, IonItemDivider } from '@ionic/react'
 import { useAppDispatch, useAppSelector } from '../store'
 import { useEffect, useState } from 'react'
 import { setCurrentTab } from '../reducers/navigation'
@@ -10,9 +10,10 @@ import { useParams } from 'react-router'
 import { IQuiz, QuizDataType } from '../model/quiz'
 import { WordCard } from '../components/WordCard'
 import { basePath } from '../App'
-import { lessonsSelector, setCurrentLesson, setLessonStatus } from '../reducers/lessons'
-import { saveLessonsToStorage } from '../storage/lessons'
-import { LessonStatus } from '../model/states'
+import { lessonsSelector, setCurrentLesson, setLessons, setLessonStatus } from '../reducers/lessons'
+import { LessonState, LessonStatus } from '../model/states'
+import { generateQuizzes } from '../service/quiz'
+import { arrowForwardOutline, refresh } from 'ionicons/icons'
 
 export const LessonPage = ({ history }) => {
   const dispatch = useAppDispatch()
@@ -36,9 +37,20 @@ export const LessonPage = ({ history }) => {
     dispatch(setLessonStatus({ lessonId: id, status: LessonStatus.QUIZ }))
   }
 
-  const onQuizFinish = async () => {
+  const onQuizFinish = () => {
     dispatch(setLessonStatus({ lessonId: id, status: LessonStatus.DONE }))
-    await saveLessonsToStorage(lessonsState)
+  }
+
+  const regenerateQuizzes = (state: Partial<LessonState>) => {
+    // regenerate quizzes for current lesson
+    const updatedLesson: LessonState = {
+      ...lessonState,
+      quizzes: generateQuizzes(lesson),
+      currentQuiz: undefined, // reset current quiz
+      ...state,
+    }
+    const updatedLessons = lessonsState.lessons.map(l => (l.lesson.id === id ? updatedLesson : l))
+    dispatch(setLessons({ lessons: updatedLessons, currentLesson: lessonsState.currentLesson }))
   }
 
   const continueLearning = () => {
@@ -75,7 +87,12 @@ export const LessonPage = ({ history }) => {
       )}
       {status === LessonStatus.QUIZ && (
         <>
-          <Quizzes currentQuiz={currentQuiz} quizzes={quizzes} onQuizzesFinish={onQuizFinish} />
+          <Quizzes
+            currentQuiz={currentQuiz}
+            quizzes={quizzes}
+            onQuizzesFinish={onQuizFinish}
+            onBackToLearning={() => regenerateQuizzes({ status: LessonStatus.LEARNING })}
+          />
         </>
       )}
       {status === LessonStatus.DONE && (
@@ -88,10 +105,18 @@ export const LessonPage = ({ history }) => {
               marginTop: '.5rem',
             }}
           >
+            <IonButton
+              onClick={() => regenerateQuizzes({ status: LessonStatus.QUIZ })}
+              style={{ margin: '1em' }}
+              color="secondary"
+            >
+              Retake Quiz
+              <IonIcon icon={refresh} slot="start" />
+            </IonButton>
             <IonButton onClick={continueLearning} style={{ margin: '1em' }}>
               Continue Learning
+              <IonIcon icon={arrowForwardOutline} slot="end" />
             </IonButton>
-            {/*TODO: add icon(s)*/}
           </div>
           <LearnLesson lesson={lesson} />
           <h3 className="ion-padding">Words learned:</h3>

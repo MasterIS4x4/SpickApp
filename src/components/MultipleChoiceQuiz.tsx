@@ -2,8 +2,8 @@ import { IMultipleChoiceQuiz, QuizDataType } from '../model/quiz'
 import { IonBadge, IonButton, IonCol, IonGrid, IonIcon, IonRow } from '@ionic/react'
 import { DataTypeRenderer } from './DataTypeRenderer'
 import { WordCard } from './WordCard'
-import { useState } from 'react'
-import { arrowForwardOutline } from 'ionicons/icons'
+import { useEffect, useState } from 'react'
+import { arrowBackOutline, arrowForwardOutline, playCircle } from 'ionicons/icons'
 import { ImpactStyle } from '@capacitor/haptics'
 import { ConfettiBurst } from './ConfettiBurst'
 import { useInteractions } from '../hooks/useInteractions'
@@ -13,6 +13,7 @@ import wrongAudio from '../assets/audio/wrong.mp3'
 interface MultipleChoiceQuizProps {
   quiz: IMultipleChoiceQuiz
   onNext: () => void
+  onBackToLearning: () => void
 }
 
 /**
@@ -28,6 +29,7 @@ export const MultipleChoiceQuiz = (props: MultipleChoiceQuizProps) => {
   const [selected, setSelected] = useState([])
   const [isSuccess, setIsSuccess] = useState(false)
   const [showConfetti, setShowConfetti] = useState(false)
+  const [wrongAnswerCount, setWrongAnswerCount] = useState(0)
 
   const { giveHapticFeedback, playAudio } = useInteractions()
 
@@ -42,23 +44,34 @@ export const MultipleChoiceQuiz = (props: MultipleChoiceQuizProps) => {
         setShowConfetti(true)
         setTimeout(() => setShowConfetti(false), 3000)
       } else {
+        setWrongAnswerCount(prevCount => prevCount + 1)
         await giveHapticFeedback(ImpactStyle.Heavy)
         await playAudio(wrongAudio)
       }
     }
   }
 
-  const nextWord = () => {
+  const clearState = () => {
+    setWrongAnswerCount(0)
     setSelected([])
     setShowConfetti(false)
     setIsSuccess(false)
+  }
+
+  const nextWord = () => {
+    clearState()
     props.onNext()
+  }
+
+  const backToLearning = () => {
+    clearState()
+    props.onBackToLearning()
   }
 
   return (
     <div className="ion-padding">
       <h2>{props.quiz.question}</h2>
-      <WordCard word={correctWord} types={inputTypes} showLabel={true} />
+      <WordCard word={correctWord} types={inputTypes} showLabel={false} />
       <IonGrid>
         <IonRow className="ion-justify-content-center">
           {words.map((word, index) => (
@@ -108,13 +121,31 @@ export const MultipleChoiceQuiz = (props: MultipleChoiceQuizProps) => {
           ))}
         </IonRow>
       </IonGrid>
+      {!isSuccess && wrongAnswerCount > 0 && (
+        <div
+          style={{
+            position: 'fixed',
+            bottom: '1rem',
+            left: '1rem',
+            zIndex: 100,
+            display: 'flex',
+            justifyContent: 'flex-start',
+            pointerEvents: 'none',
+          }}
+        >
+          <IonButton onClick={backToLearning} color="secondary" style={{ pointerEvents: 'auto' }}>
+            Back to learning
+            <IonIcon icon={arrowBackOutline} slot="start" />
+            <IonIcon icon={playCircle} slot="end" />
+          </IonButton>
+        </div>
+      )}
       {isSuccess && (
         <div
           style={{
             position: 'fixed',
             bottom: '1rem',
             right: '1rem',
-            left: '1rem',
             zIndex: 100,
             display: 'flex',
             justifyContent: 'flex-end',

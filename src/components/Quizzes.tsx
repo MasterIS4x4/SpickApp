@@ -13,6 +13,7 @@ interface QuizzesProps {
   currentQuiz?: number
   onQuizChange?: (index: number) => void
   onQuizzesFinish?: () => void
+  onBackToLearning?: () => void
 }
 
 export const Quizzes = (props: QuizzesProps) => {
@@ -52,7 +53,9 @@ export const Quizzes = (props: QuizzesProps) => {
     }
   }
 
-  // TODO: button to go back to learning (YT)
+  const backToLearning = () => {
+    props.onBackToLearning?.()
+  }
 
   return (
     <div style={{ paddingTop: '.35rem' }}>
@@ -66,6 +69,7 @@ export const Quizzes = (props: QuizzesProps) => {
         <MultipleChoiceQuiz
           quiz={props.quizzes[currentQuizIndex] as IMultipleChoiceQuiz}
           onNext={handleNextQuiz}
+          onBackToLearning={backToLearning}
         />
       )}
       {isQuizzesDone && (

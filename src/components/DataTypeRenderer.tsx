@@ -35,7 +35,7 @@ export const DataTypeRenderer = (props: DataTypeRendererProps) => {
   switch (type) {
     case QuizDataType.Text:
       return (
-        <IonText style={{ fontSize: '1rem' }}>
+        <IonText style={{ fontSize: '1.2rem' }}>
           {word.nameRO} - {word.nameEN}
         </IonText>
       )

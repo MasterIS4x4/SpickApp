@@ -80,7 +80,6 @@ export const MultipleChoiceQuiz = (props: MultipleChoiceQuizProps) => {
               size="12"
               sizeLg={(12 / words.length).toString()}
               style={{
-                textAlign: 'center',
                 marginBottom: '.5rem', // Add some spacing between rows on mobile
                 border:
                   '2px solid ' +

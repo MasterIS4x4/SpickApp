@@ -1,5 +1,8 @@
 import React, { useEffect, useRef, useState } from 'react'
 import { createAnimation } from '@ionic/react'
+import { useInteractions } from '../hooks/useInteractions'
+
+import finishAudio from '../assets/audio/finish.mp3'
 
 interface CongratsProps {
   visible: boolean
@@ -13,6 +16,7 @@ interface CongratsProps {
 export const CongratsAnimation = (props: CongratsProps) => {
   const containerRef = useRef<HTMLDivElement>(null)
   const iconRef = useRef<HTMLDivElement>(null)
+  const { playAudio } = useInteractions()
   const [isClosing, setIsClosing] = useState(false)
 
   const playExitAnimation = async () => {
@@ -71,6 +75,7 @@ export const CongratsAnimation = (props: CongratsProps) => {
       window.scrollTo({ top: 0, behavior: 'smooth' })
 
       const timeoutId = setTimeout(() => {
+        playAudio(finishAudio)
         containerAnim.play()
         iconAnim.play()
         textAnim.play()
@@ -91,6 +96,10 @@ export const CongratsAnimation = (props: CongratsProps) => {
     <div
       ref={containerRef}
       style={{
+        position: 'fixed',
+        top: 'calc(50% - 100px)',
+        left: '2.5%',
+        transform: 'translateX(20px)',
         zIndex: 1000,
         width: '95%',
         margin: '.5rem auto',

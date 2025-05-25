@@ -1,12 +1,10 @@
-import { IMultipleChoiceQuiz, IQuiz, QuizDataType, QuizType } from '../model/quiz'
+import { IMultipleChoiceQuiz, IQuiz, QuizType } from '../model/quiz'
 import { useEffect, useState } from 'react'
 import { IonProgressBar } from '@ionic/react'
 import { MultipleChoiceQuiz } from './MultipleChoiceQuiz'
 import { CongratsAnimation } from './CongratsAnimation'
-import { useAppDispatch, useAppSelector } from '../store'
-import { lessonsSelector, setCurrentQuiz } from '../reducers/lessons'
-import { saveLessonsToStorage } from '../storage/lessons'
-import { getLessonQuizIndex } from '../service/lesson'
+import { useAppDispatch } from '../store'
+import { setCurrentQuiz } from '../reducers/lessons'
 
 interface QuizzesProps {
   quizzes: IQuiz[]

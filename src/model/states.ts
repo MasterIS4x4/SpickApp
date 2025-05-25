@@ -17,7 +17,6 @@ export interface Preferences {
 
 export enum LessonStatus {
   LEARNING,
-  SPEAKING,
   QUIZ,
   DONE,
 }

@@ -41,6 +41,7 @@ export const Quizzes = (props: QuizzesProps) => {
   }, [currentQuizIndex])
 
   const handleNextQuiz = () => {
+    window.scrollTo({ top: 0, behavior: 'smooth' })
     if (currentQuizIndex === props.quizzes.length - 1) {
       setShowCongrats(true)
       setIsQuizzesDone(true)

@@ -39,7 +39,7 @@ export const LessonsPage = () => {
       <IonGrid>
         <IonRow>
           {lessonsState.lessons.map((lessonState, index) => {
-            const isNotStarted = lessonState.status === LessonStatus.LEARNING || lessonState.status === LessonStatus.SPEAKING
+            const isNotStarted = lessonState.status === LessonStatus.LEARNING
             const isInProgress = lessonState.status === LessonStatus.QUIZ
             const isCompleted = isLessonCompleted(lessonState)
             const lesson: ILesson = lessonState.lesson

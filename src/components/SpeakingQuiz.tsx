@@ -1,8 +1,9 @@
-import { IonButton, IonText } from '@ionic/react'
+import { IonButton, IonIcon, IonText } from '@ionic/react'
 import { useEffect, useState } from 'react'
 import { DataTypeRenderer } from './DataTypeRenderer'
 import { IWord } from '../model/lesson'
 import { QuizDataType } from '../model/quiz'
+import { mic } from 'ionicons/icons'
 
 interface SpeakingQuizProps {
   words: IWord[]
@@ -108,7 +109,7 @@ export const SpeakingQuiz = ({ words, onNext }: SpeakingQuizProps) => {
 
   return (
     <div className="ion-padding" style={{ textAlign: 'center' }}>
-      <h2>Say each word out loud</h2>
+      <h2> Say each word out loud 🗣</h2>
 
       {!hasMicPermission && !micAccessDenied && (
         <IonButton onClick={requestMicAccess}>Allow Microphone</IonButton>
@@ -154,6 +155,7 @@ export const SpeakingQuiz = ({ words, onNext }: SpeakingQuizProps) => {
                   }}
                 >
                   <IonButton onClick={() => startRecording(word.id)} disabled={state?.recording}>
+                    <IonIcon icon={mic} slot="start" />
                     {state?.recording ? `Recording... ${state.seconds}` : 'Start Recording'}
                   </IonButton>
 
@@ -168,8 +170,7 @@ export const SpeakingQuiz = ({ words, onNext }: SpeakingQuizProps) => {
 
                 {userRecording && (
                   <div style={{ marginTop: '1rem' }}>
-                    <audio controls src={userRecording}></audio>
-
+                    <audio controls src={userRecording} key={userRecording} />
                     <p>
                       <IonText color="medium">Your recording</IonText>
                     </p>

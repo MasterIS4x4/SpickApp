@@ -59,6 +59,7 @@ import { getLessonsFromStorage, saveLessonsToStorage } from './storage/lessons'
 import { getLessonQuizIndex, getLessons, updateLessonsState } from './service/lesson'
 import { lessonsSelector, setLessons, setLessonsWithQuizzes } from './reducers/lessons'
 import { LessonsState } from './model/states'
+import { SpeakingPage } from './pages/SpeakingPage'
 
 setupIonicReact()
 
@@ -123,6 +124,7 @@ const App = () => {
             <Route exact path={basePath} render={() => <Redirect to={basePath + 'lessons'} />} />
             <Route exact path={basePath + 'lessons'} component={LessonsPage} />
             <Route exact path={basePath + 'lessons/:id'} component={LessonPage} />
+            <Route exact path={basePath + 'lessons/:id/speaking'} component={SpeakingPage} />
             <Route exact path={basePath + 'preferences'} component={Preferences} />
             <Route exact path={basePath + 'test'} component={Test} />
 

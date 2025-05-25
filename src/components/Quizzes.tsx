@@ -1,4 +1,4 @@
-import { IMultipleChoiceQuiz, IQuiz, ISpeakingQuiz, QuizDataType, QuizType } from '../model/quiz'
+import { IMultipleChoiceQuiz, IQuiz, QuizDataType, QuizType } from '../model/quiz'
 import { useEffect, useState } from 'react'
 import { IonProgressBar } from '@ionic/react'
 import { MultipleChoiceQuiz } from './MultipleChoiceQuiz'
@@ -7,7 +7,6 @@ import { useAppDispatch, useAppSelector } from '../store'
 import { lessonsSelector, setCurrentQuiz } from '../reducers/lessons'
 import { saveLessonsToStorage } from '../storage/lessons'
 import { getLessonQuizIndex } from '../service/lesson'
-import { SpeakingQuiz } from './SpeakingQuiz'
 
 interface QuizzesProps {
   quizzes: IQuiz[]
@@ -66,12 +65,6 @@ export const Quizzes = (props: QuizzesProps) => {
       {!isQuizzesDone && props.quizzes[currentQuizIndex].type === QuizType.MultipleChoice && (
         <MultipleChoiceQuiz
           quiz={props.quizzes[currentQuizIndex] as IMultipleChoiceQuiz}
-          onNext={handleNextQuiz}
-        />
-      )}
-      {!isQuizzesDone && props.quizzes[currentQuizIndex].type === QuizType.Speaking && (
-        <SpeakingQuiz
-          quiz={props.quizzes[currentQuizIndex] as ISpeakingQuiz}
           onNext={handleNextQuiz}
         />
       )}

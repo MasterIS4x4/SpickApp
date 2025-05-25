@@ -7,7 +7,7 @@ import { getLesson, getNextLesson } from '../service/lesson'
 import { LearnLesson } from '../components/LearnLesson'
 import { Quizzes } from '../components/Quizzes'
 import { useParams } from 'react-router'
-import { IQuiz, ISpeakingQuiz, QuizDataType, QuizType } from '../model/quiz'
+import { IQuiz, QuizDataType } from '../model/quiz'
 import { WordCard } from '../components/WordCard'
 import { basePath } from '../App'
 import { lessonsSelector, setCurrentLesson, setLessonStatus } from '../reducers/lessons'
@@ -27,32 +27,15 @@ export const LessonPage = ({ history }) => {
   const currentQuiz = lessonState?.currentQuiz
 
   const [hoveredIndex, setHoveredIndex] = useState<number>(-1)
-  const [speakingQuiz, setSpeakingQuiz] = useState<ISpeakingQuiz | null>(null)
 
   useEffect(() => {
     dispatch(setCurrentTab({ title: 'Lesson ' + id }))
-    // Fetch lessons from the API or local storage
-    getLesson(id)
-      .then(lesson => {
-        setLesson(lesson)
-        const quizzes = generateQuizzes(lesson)
-        console.log('Quizzes: ', quizzes)
-        setQuizzes(quizzes)
-        setStatus(LessonStatus.LEARNING)
-
-        const speakingWords = [...lesson.words].sort(() => 0.5 - Math.random()).slice(0, 5)
-        setSpeakingQuiz({
-          question: 'Say the words out loud',
-          type: QuizType.Speaking,
-          words: speakingWords,
-          inputTypes: [QuizDataType.Text],
-        })
-      })
-      .catch(err => {
-        alert('Error fetching lessons. DB may be not available')
-      })
-    // reset status to learning
+    dispatch(setCurrentLesson(id))
   }, [params.id])
+
+  const startSpeaking = () => {
+    dispatch(setLessonStatus({ lessonId: id, status: LessonStatus.SPEAKING }))
+  }
 
   const startQuiz = () => {
     dispatch(setLessonStatus({ lessonId: id, status: LessonStatus.QUIZ }))
@@ -80,7 +63,7 @@ export const LessonPage = ({ history }) => {
     >
       {status === LessonStatus.LEARNING && (
         <>
-          <LearnLesson lesson={lesson} onVideoEnd={startQuiz} autoPlay={true} />
+          <LearnLesson lesson={lesson} onVideoEnd={startSpeaking} autoPlay={true} />
           <div
             style={{
               display: 'flex',
@@ -89,25 +72,18 @@ export const LessonPage = ({ history }) => {
               marginTop: '.5rem',
             }}
           >
-            <IonButton onClick={startQuiz} style={{ margin: '1em' }}>
+            <IonButton onClick={startSpeaking} style={{ margin: '1em' }}>
               Start Quiz
             </IonButton>
           </div>
         </>
       )}
+      {status === LessonStatus.SPEAKING && <SpeakingQuiz words={lesson.words} onNext={startQuiz} />}
       {status === LessonStatus.QUIZ && (
         <>
           <Quizzes currentQuiz={currentQuiz} quizzes={quizzes} onQuizzesFinish={onQuizFinish} />
         </>
-        <Quizzes quizzes={quizzes} onQuizzesFinish={() => setStatus(LessonStatus.SPEAKING)} />
       )}
-      {status === LessonStatus.SPEAKING && speakingQuiz && (
-        <SpeakingQuiz
-          quiz={speakingQuiz as ISpeakingQuiz}
-          onNext={() => setStatus(LessonStatus.DONE)}
-        />
-      )}
-
       {status === LessonStatus.DONE && (
         <>
           <div

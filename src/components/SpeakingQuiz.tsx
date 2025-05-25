@@ -1,19 +1,28 @@
 import { IonButton, IonText } from '@ionic/react'
-import { ISpeakingQuiz } from '../model/quiz'
 import { useEffect, useState } from 'react'
 import { DataTypeRenderer } from './DataTypeRenderer'
+import { IWord } from '../model/lesson'
+import { QuizDataType } from '../model/quiz'
 
 interface SpeakingQuizProps {
-  quiz: ISpeakingQuiz
+  words: IWord[]
   onNext: () => void
 }
 
-export const SpeakingQuiz = ({ quiz, onNext }: SpeakingQuizProps) => {
-  const [recording, setRecording] = useState(false)
-  const [recordingSeconds, setRecordingSeconds] = useState(6)
-  const [audioUrl, setAudioUrl] = useState<string | null>(null)
-  const [hasMicPermission, setHasMicPermission] = useState<boolean>(false)
+interface RecordingState {
+  recording: boolean
+  seconds: number
+  mediaRecorder?: MediaRecorder
+  chunks: Blob[]
+  intervalId?: NodeJS.Timeout
+  stream?: MediaStream
+}
+
+export const SpeakingQuiz = ({ words, onNext }: SpeakingQuizProps) => {
+  const [hasMicPermission, setHasMicPermission] = useState(false)
   const [micAccessDenied, setMicAccessDenied] = useState(false)
+  const [recordings, setRecordings] = useState<{ [wordId: string]: string | null }>({})
+  const [states, setStates] = useState<{ [wordId: string]: RecordingState }>({})
 
   useEffect(() => {
     navigator.permissions
@@ -21,72 +30,89 @@ export const SpeakingQuiz = ({ quiz, onNext }: SpeakingQuizProps) => {
       .then(result => {
         setHasMicPermission(result.state === 'granted' || result.state === 'prompt')
       })
-      .catch(() => {
-        setHasMicPermission(false)
-      })
+      .catch(() => setHasMicPermission(false))
   }, [])
 
   const requestMicAccess = async () => {
     try {
       await navigator.mediaDevices.getUserMedia({ audio: true })
       setHasMicPermission(true)
-    } catch (err) {
+    } catch {
       alert('Microphone access denied or not available.')
       setMicAccessDenied(true)
     }
   }
 
-  const startRecording = async () => {
+  const startRecording = async (wordId: string) => {
     const stream = await navigator.mediaDevices.getUserMedia({ audio: true })
     const mediaRecorder = new MediaRecorder(stream)
     const chunks: Blob[] = []
 
-    mediaRecorder.ondataavailable = e => chunks.push(e.data)
+    mediaRecorder.ondataavailable = e => {
+      console.log('Data available:', e.data)
+      chunks.push(e.data)
+    }
     mediaRecorder.onstop = () => {
       const blob = new Blob(chunks, { type: 'audio/webm' })
-      setAudioUrl(URL.createObjectURL(blob))
+      const url = URL.createObjectURL(blob)
+      setRecordings(prev => ({ ...prev, [wordId]: url }))
+      stream.getTracks().forEach(track => track.stop())
+
+      setStates(prev => {
+        const updated = { ...prev[wordId], recording: false, intervalId: undefined }
+        return { ...prev, [wordId]: updated }
+      })
     }
 
     mediaRecorder.start()
-    setRecording(true)
-    setRecordingSeconds(6)
 
-    const countdownInterval = setInterval(() => {
-      setRecordingSeconds(prev => {
-        if (prev <= 1) {
-          clearInterval(countdownInterval)
+    const intervalId = setInterval(() => {
+      setStates(prev => {
+        const current = prev[wordId]
+        if (!current) return prev
+        const newSeconds = current.seconds - 1
+        if (newSeconds <= 0) {
+          clearInterval(intervalId)
           mediaRecorder.stop()
-          setRecording(false)
         }
-        return prev - 1
+        return {
+          ...prev,
+          [wordId]: {
+            ...current,
+            seconds: newSeconds,
+          },
+        }
       })
     }, 1000)
+
+    setStates(prev => ({
+      ...prev,
+      [wordId]: {
+        recording: true,
+        seconds: 20,
+        mediaRecorder,
+        chunks,
+        intervalId,
+        stream,
+      },
+    }))
+  }
+
+  const stopRecording = (wordId: string) => {
+    const state = states[wordId]
+    if (state?.mediaRecorder && state.recording) {
+      state.mediaRecorder.stop()
+      clearInterval(state.intervalId)
+    }
   }
 
   return (
-    <div
-      className="ion-padding"
-      style={{
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-        gap: '1rem',
-        textAlign: 'center',
-      }}
-    >
-      <h2 style={{ fontSize: '1.5rem' }}>{quiz.question}</h2>
+    <div className="ion-padding" style={{ textAlign: 'center' }}>
+      <h2>Say each word out loud</h2>
 
-      {quiz.words.length > 0 && (
-        <div style={{ marginBottom: '1rem' }}>
-          <DataTypeRenderer word={quiz.words[0]} type={quiz.inputTypes[0]} />
-        </div>
+      {!hasMicPermission && !micAccessDenied && (
+        <IonButton onClick={requestMicAccess}>Allow Microphone</IonButton>
       )}
-
-      {!hasMicPermission && !micAccessDenied ? (
-        <IonButton color="medium" onClick={requestMicAccess}>
-          Allow Microphone
-        </IonButton>
-      ) : null}
 
       {micAccessDenied && (
         <>
@@ -96,19 +122,66 @@ export const SpeakingQuiz = ({ quiz, onNext }: SpeakingQuizProps) => {
       )}
 
       {hasMicPermission && !micAccessDenied && (
-        <IonButton onClick={startRecording} disabled={recording}>
-          {recording ? `Recording... ${recordingSeconds}` : 'Start Recording'}
-        </IonButton>
-      )}
+        <div style={{ width: '100%' }}>
+          {words.map(word => {
+            const state = states[word.id]
+            const userRecording = recordings[word.id]
+            return (
+              <div
+                key={word.id}
+                style={{
+                  border: '1px solid var(--ion-color-medium)',
+                  borderRadius: '12px',
+                  padding: '1rem',
+                  marginBottom: '1.5rem',
+                  backgroundColor: 'var(--ion-color-light)',
+                }}
+              >
+                <div>
+                  <DataTypeRenderer word={word} type={QuizDataType.Text} />
+                </div>
 
-      {audioUrl && (
-        <>
-          <audio controls src={audioUrl}></audio>
-          <IonText color="medium">
-            Compare your pronunciation and press continue if your voice match.
-          </IonText>
-          <IonButton onClick={onNext}>Continue</IonButton>
-        </>
+                <div style={{ marginTop: '0.5rem' }}>
+                  <DataTypeRenderer word={word} type={QuizDataType.Audio} />
+                </div>
+
+                <div
+                  style={{
+                    marginTop: '0.75rem',
+                    display: 'flex',
+                    gap: '1rem',
+                    justifyContent: 'center',
+                  }}
+                >
+                  <IonButton onClick={() => startRecording(word.id)} disabled={state?.recording}>
+                    {state?.recording ? `Recording... ${state.seconds}` : 'Start Recording'}
+                  </IonButton>
+
+                  <IonButton
+                    onClick={() => stopRecording(word.id)}
+                    disabled={!state?.recording}
+                    color="danger"
+                  >
+                    Stop
+                  </IonButton>
+                </div>
+
+                {userRecording && (
+                  <div style={{ marginTop: '1rem' }}>
+                    <audio controls src={userRecording}></audio>
+
+                    <p>
+                      <IonText color="medium">Your recording</IonText>
+                    </p>
+                  </div>
+                )}
+              </div>
+            )
+          })}
+          <IonButton expand="block" onClick={onNext} style={{ marginTop: '1rem' }}>
+            Continue
+          </IonButton>
+        </div>
       )}
     </div>
   )

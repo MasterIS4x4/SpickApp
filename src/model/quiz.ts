@@ -3,7 +3,6 @@ import { IWord } from './lesson'
 export enum QuizType {
   MultipleChoice = 'multipleChoice',
   Match = 'match',
-  Speaking = 'speaking',
 }
 
 export enum QuizDataType {

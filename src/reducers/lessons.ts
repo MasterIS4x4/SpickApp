@@ -26,6 +26,10 @@ const navigationSlice = createSlice({
       if (!action.payload) return
       return updateLessonsState(state, action.payload)
     },
+    resetLessons: (_state, action: PayloadAction<ILesson[]>) => {
+      if (!action.payload) return
+      return updateLessonsState({ lessons: [] }, action.payload)
+    },
     setCurrentLesson: (state, action: PayloadAction<string>) => {
       const lessonId = action.payload
       const lessonIndex = state.lessons.findIndex(lesson => lesson.lesson.id === lessonId)
@@ -47,6 +51,7 @@ const navigationSlice = createSlice({
 export const {
   setLessons,
   setLessonsWithQuizzes,
+  resetLessons,
   setCurrentLesson,
   setLessonStatus,
   setCurrentQuiz,

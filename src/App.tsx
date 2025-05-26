@@ -103,14 +103,9 @@ const App = () => {
   }, [])
 
   useEffect(() => {
+    // block resetting lessons to apply to local storage
     if (!lessonsState || !lessonsState.lessons || lessonsState.lessons.length === 0)
-      getLessons()
-        .then(lessons => {
-          dispatch(setLessonsWithQuizzes(lessons))
-        })
-        .catch(err => {
-          console.error('Error fetching lessons', err)
-        })
+      return
     saveLessonsToStorage(lessonsState)
       .then(() => console.log('Saved lessons', lessonsState))
       .catch(err => console.error('Error saving lessons', err))

@@ -16,7 +16,8 @@ import {
 import { useDarkMode } from '../hooks/useDarkMode'
 import { savePreferencesToStorage } from '../storage/preferences'
 import { trashOutline } from 'ionicons/icons'
-import { setLessons } from '../reducers/lessons'
+import { resetLessons, setLessons, setLessonsWithQuizzes } from '../reducers/lessons'
+import { getLessons } from '../service/lesson'
 
 export const Preferences = () => {
   const dispatch = useAppDispatch()
@@ -47,7 +48,13 @@ export const Preferences = () => {
   }
 
   const clearData = async () => {
-    dispatch(setLessons({ lessons: [] }))
+    getLessons()
+      .then(lessons => {
+        dispatch(resetLessons(lessons))
+      })
+      .catch(err => {
+        console.error('Error fetching lessons', err)
+      })
     setIsClearDataPopoverOpen(false)
   }
 
